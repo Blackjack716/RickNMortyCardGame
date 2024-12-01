@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.quotes.ricknmortycards"
+    namespace = "com.rnm.ricknmortycards"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.quotes.ricknmortycards"
+        applicationId = "com.rnm.ricknmortycards"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
