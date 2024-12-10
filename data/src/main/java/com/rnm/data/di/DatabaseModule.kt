@@ -1,6 +1,7 @@
 package com.rnm.data.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.rnm.data.local.AppDatabase
 import com.rnm.data.local.dao.CardDao
@@ -30,5 +31,12 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences = context.getSharedPreferences(
+        SHARED_PREFERENCES, Context.MODE_PRIVATE)
+
+    @Provides
+    @Singleton
     fun provideCharacterEntityDao(appDatabase: AppDatabase): CardDao = appDatabase.CardDao()
 }
+
+const val SHARED_PREFERENCES = "sharedPreferences"

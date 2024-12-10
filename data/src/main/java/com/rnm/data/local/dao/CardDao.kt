@@ -24,7 +24,7 @@ interface CardDao {
     fun updateCard(card: CardEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addFavouriteCharacter(vararg cardEntity: CardEntity)
+    fun addCards(cards: List<CardEntity>)
 
     @Delete
     fun delete(cardEntity: CardEntity)

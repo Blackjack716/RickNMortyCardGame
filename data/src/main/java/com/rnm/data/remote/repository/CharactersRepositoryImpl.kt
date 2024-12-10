@@ -1,6 +1,8 @@
 package com.rnm.data.remote.repository
 
 import com.haroldadmin.cnradapter.NetworkResponse
+import com.rnm.data.local.dao.CardDao
+import com.rnm.data.local.model.toNewCard
 import com.rnm.data.remote.api.RickAndMortyApi
 import com.rnm.data.remote.model.Characters
 import com.rnm.data.remote.model.ErrorResponseType
@@ -8,11 +10,13 @@ import com.rnm.domain.repository.CharactersRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CharactersRepositoryImpl @Inject constructor(
-    private val rickAndMortyApi: RickAndMortyApi
+    private val rickAndMortyApi: RickAndMortyApi,
+    private val cardDao: CardDao
 ) : CharactersRepository {
 
     private val _characters = MutableStateFlow<List<Characters>>(emptyList())
@@ -21,7 +25,6 @@ class CharactersRepositoryImpl @Inject constructor(
     override suspend fun updateAllCharacters() {
         errorType = null
         CoroutineScope(Dispatchers.IO).launch {
-            //delay(5000)
             when (val response = rickAndMortyApi.getCharacters()) {
                 is NetworkResponse.Success -> {
                     _characters.emit(response.body.results)
@@ -49,6 +52,9 @@ class CharactersRepositoryImpl @Inject constructor(
                 when (val response = rickAndMortyApi.getNextPageCharacters(pageNumber)) {
                     is NetworkResponse.Success -> {
                         _characters.emit(_characters.value.plus(response.body.results))
+                        if (pageNumber == pagesAmount - 1) {
+                            addCardsToDatabase()
+                        }
                     }
 
                     is NetworkResponse.ServerError -> errorType = ErrorResponseType.SERVER_ERROR
@@ -57,6 +63,16 @@ class CharactersRepositoryImpl @Inject constructor(
                 }
             }
 
+        }
+    }
+
+    private suspend fun addCardsToDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            _characters.collectLatest {
+                if (errorType == null) {
+                    cardDao.addCards(it.toNewCard())
+                }
+            }
         }
     }
 }

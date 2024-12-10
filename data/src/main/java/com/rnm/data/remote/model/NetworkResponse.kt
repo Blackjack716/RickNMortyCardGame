@@ -12,3 +12,4 @@ class ErrorResponse {
 enum class ErrorResponseType {
     SERVER_ERROR, NETWORK_ERROR, UNKNOWN_ERROR
 }
+

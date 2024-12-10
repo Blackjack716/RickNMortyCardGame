@@ -14,4 +14,16 @@ data class CardEntity(
     @ColumnInfo(name = "rarity") val rarity: Int?,
     @ColumnInfo(name = "upgradeCost") val upgradeCost: Float?,
     @ColumnInfo(name = "sellValue") val sellValue: Float?
-)
+) {
+    companion object {
+        const val RARITY_1 = 1
+        const val RARITY_2 = 2
+        const val RARITY_3 = 3
+        const val UPGRADE_COST_1 = 100f
+        const val UPGRADE_COST_2 = 100f
+        const val UPGRADE_COST_3 = 100f
+        const val SELL_VALUE_1 = 100f
+        const val SELL_VALUE_2 = 100f
+        const val SELL_VALUE_3 = 100f
+    }
+}
