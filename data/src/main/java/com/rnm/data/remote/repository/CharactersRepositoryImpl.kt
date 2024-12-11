@@ -5,7 +5,7 @@ import androidx.core.content.edit
 import com.haroldadmin.cnradapter.NetworkResponse
 import com.rnm.data.local.CardRepositoryImpl.Companion.IS_DATABASE_UP_TO_DATE
 import com.rnm.data.local.dao.CardDao
-import com.rnm.data.local.model.toNewCard
+import com.rnm.data.local.model.toNewCardEntity
 import com.rnm.data.remote.api.RickAndMortyApi
 import com.rnm.data.remote.model.Characters
 import com.rnm.data.remote.model.ErrorResponseType
@@ -74,7 +74,7 @@ class CharactersRepositoryImpl @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             _characters.collectLatest {
                 if (errorType == null) {
-                    cardDao.addCards(it.toNewCard())
+                    cardDao.addCards(it.toNewCardEntity())
                     sharedPreferences.edit {
                         putBoolean(IS_DATABASE_UP_TO_DATE, true)
                     }

@@ -2,15 +2,21 @@ package com.rnm.data.local
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.rnm.data.local.dao.CardDao
+import com.rnm.data.local.model.toCard
+import com.rnm.domain.model.Card
 import com.rnm.domain.repository.CardRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CardRepositoryImpl @Inject constructor(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val cardDao: CardDao
 ) : CardRepository {
 
-    override suspend fun getAllCards() {
-        TODO("Not yet implemented")
+    override suspend fun getAllCards(): Flow<List<Card>> {
+        return cardDao.getAllCards().map { it.toCard() }
     }
 
     override fun getCurrencyValue(): Float {
