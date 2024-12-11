@@ -9,4 +9,6 @@ interface CardRepository {
     fun getCurrencyValue(): Float
     fun setCurrencyValue(value: Float)
     fun isDatabaseUpdated(): Boolean
+    suspend fun upgradeCard(cardId: Int)
+    suspend fun sellCard(cardId: Int)
 }

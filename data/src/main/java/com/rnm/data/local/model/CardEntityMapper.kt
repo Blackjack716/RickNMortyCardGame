@@ -13,7 +13,7 @@ fun List<Characters>.toNewCardEntity(): List<CardEntity> {
             photoUrl = character.image,
             rarity = null,
             sellValue = null,
-            upgradeCost = CardEntity.UPGRADE_COST_1
+            upgradeCost = Card.UPGRADE_COST_1
         )
     }
 }

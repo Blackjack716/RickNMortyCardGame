@@ -3,6 +3,15 @@ package com.rnm.data.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.rnm.domain.model.Card.Companion.RARITY_1
+import com.rnm.domain.model.Card.Companion.RARITY_2
+import com.rnm.domain.model.Card.Companion.RARITY_3
+import com.rnm.domain.model.Card.Companion.SELL_VALUE_1
+import com.rnm.domain.model.Card.Companion.SELL_VALUE_2
+import com.rnm.domain.model.Card.Companion.SELL_VALUE_3
+import com.rnm.domain.model.Card.Companion.UPGRADE_COST_1
+import com.rnm.domain.model.Card.Companion.UPGRADE_COST_2
+import com.rnm.domain.model.Card.Companion.UPGRADE_COST_3
 
 @Entity
 data class CardEntity(
@@ -14,16 +23,30 @@ data class CardEntity(
     @ColumnInfo(name = "rarity") val rarity: Int?,
     @ColumnInfo(name = "upgradeCost") val upgradeCost: Float?,
     @ColumnInfo(name = "sellValue") val sellValue: Float?
-) {
-    companion object {
-        const val RARITY_1 = 1
-        const val RARITY_2 = 2
-        const val RARITY_3 = 3
-        const val UPGRADE_COST_1 = 100f
-        const val UPGRADE_COST_2 = 100f
-        const val UPGRADE_COST_3 = 100f
-        const val SELL_VALUE_1 = 100f
-        const val SELL_VALUE_2 = 100f
-        const val SELL_VALUE_3 = 100f
+)
+
+fun CardEntity.getCardUpgradeCost(): Float {
+    return when (rarity) {
+        null -> UPGRADE_COST_1
+        1 -> UPGRADE_COST_2
+        2 -> UPGRADE_COST_3
+        else -> 0f
+    }
+}
+
+fun CardEntity.getCardSellCost(): Float {
+    return when (rarity) {
+        1 -> SELL_VALUE_1
+        2 -> SELL_VALUE_2
+        3 -> SELL_VALUE_3
+        else -> 0f
+    }
+}
+
+fun CardEntity.getBetterCardRarity(): Int {
+    return when(rarity) {
+        1 -> RARITY_2
+        2 -> RARITY_3
+        else -> RARITY_1
     }
 }
