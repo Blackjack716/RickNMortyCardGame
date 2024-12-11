@@ -17,7 +17,7 @@ class CardRepositoryImpl @Inject constructor(
         return sharedPreferences.getFloat(CURRENCY_VALUE, 0f)
     }
 
-    override fun editCurrencyValue(value: Float) {
+    override fun setCurrencyValue(value: Float) {
         sharedPreferences.edit {
             putFloat(CURRENCY_VALUE, value)
         }
