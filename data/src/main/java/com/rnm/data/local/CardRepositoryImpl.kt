@@ -19,6 +19,10 @@ class CardRepositoryImpl @Inject constructor(
         return cardDao.getAllCards().map { it.toCard() }
     }
 
+    override suspend fun getFavCards(): Flow<List<Card>> {
+        return cardDao.getFavouriteCards().map { it.toCard() }
+    }
+
     override fun getCurrencyValue(): Float {
         return sharedPreferences.getFloat(CURRENCY_VALUE, 0f)
     }
