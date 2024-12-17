@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RickNMortyCards</string>
+    <string name="energy_level_button">%1$d/%2$d</string>
+    <string name="energy_recharging_info">Recharging...</string>
 </resources>

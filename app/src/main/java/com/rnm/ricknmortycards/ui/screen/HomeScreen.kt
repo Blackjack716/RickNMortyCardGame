@@ -7,12 +7,16 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,82 +30,100 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import com.rnm.ricknmortycards.R
-import com.rnm.ricknmortycards.ui.MainViewModel
+import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
-import com.rnm.ricknmortycards.ui.theme.RickNMortyCardsTheme
 
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        onNavBardEvent = {},
+    )
 }
 
 @Composable
 fun HomeScreen(
-    viewModel: MainViewModel = viewModel()
+    modifier: Modifier = Modifier,
+    onNavBardEvent: (NavBarEvent) -> Unit,
+    //viewModel: MainViewModel = viewModel()
 ) {
-    RickNMortyCardsTheme {
-        Column(
+    Column(
+        modifier = modifier
+            .fillMaxSize(),
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
         ) {
-            Box(
+            CurrencyCounter()
+            Image(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .align(Alignment.TopCenter)
+                    .padding(top = 100.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.home_background),
+                contentDescription = null
+            )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 100.dp),
-                    imageVector = ImageVector.vectorResource(R.drawable.home_background),
-                    contentDescription = null
+                PulsatingButton(
+                    animationContent = {
+                        Box(
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(150.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFBFDE42))
+                        )
+                    },
+                    content = {
+                        Box(
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(150.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF42B4CA))
+                        ) {
+                            Text(
+                                text = stringResource(R.string.energy_level_button, 0, 10),
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                fontSize = 36.sp
+                            )
+                        }
+                    }
                 )
                 Column(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .width(150.dp)
+                        .height(50.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Color.LightGray),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    PulsatingButton(
-                        animationContent = {
-                            Box(
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .height(150.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFBFDE42))
-                            )
-                        },
-                        content = {
-                            Box(
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .height(150.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFF42B4CA))
-                            ) {
-
-                            }
-                        }
-                    )
-                    Column(
+                    Text(
+                        text = stringResource(R.string.energy_recharging_info),
                         modifier = Modifier
-                            .padding(top = 20.dp)
-                            .width(150.dp)
-                            .height(50.dp)
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(Color.LightGray)
-                    ) {
-                        Text(text = "next energy unit in TIME", modifier = Modifier.padding(horizontal = 8.dp))
-                    }
+                            .padding(horizontal = 8.dp)
+                    )
+                    Text("TIME")
                 }
-                NavigationBottomBar(modifier = Modifier.align(Alignment.BottomCenter))
-
             }
+            NavigationBottomBar(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onEvent = onNavBardEvent
+            )
+
         }
     }
 }
@@ -145,5 +167,29 @@ private fun PulsatingButton(
         content()
     }
 
+}
+
+@Composable
+private fun BoxScope.CurrencyCounter() {
+    Row(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .border(width = 3.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp)),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Image(
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .size(30.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.icon_crystal),
+            contentDescription = null
+        )
+        Text(
+            text = "100000",
+            modifier = Modifier
+                .padding(end = 4.dp)
+                .align(Alignment.CenterVertically)
+        )
+    }
 }
 

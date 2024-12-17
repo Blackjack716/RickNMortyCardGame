@@ -1,6 +1,7 @@
 package com.rnm.ricknmortycards.ui.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun NavigationBottomBar(modifier: Modifier = Modifier) {
+fun NavigationBottomBar(
+    modifier: Modifier = Modifier,
+    onEvent: (NavBarEvent) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,6 +33,7 @@ fun NavigationBottomBar(modifier: Modifier = Modifier) {
                 .fillMaxHeight()
                 .background(color = Color.LightGray)
                 .weight(0.3f)
+                .clickable { onEvent(NavBarEvent.OnAllCardClicked) }
         ) {
 
         }
@@ -38,6 +43,7 @@ fun NavigationBottomBar(modifier: Modifier = Modifier) {
                 .fillMaxHeight()
                 .background(color = Color.LightGray)
                 .weight(0.3f)
+                .clickable { onEvent(NavBarEvent.OnHomeClicked) }
         ) {
 
         }
@@ -47,6 +53,7 @@ fun NavigationBottomBar(modifier: Modifier = Modifier) {
                 .fillMaxHeight()
                 .background(color = Color.LightGray)
                 .weight(0.3f)
+                .clickable { onEvent(NavBarEvent.OnFavCardClicked) }
         ) {
 
         }
