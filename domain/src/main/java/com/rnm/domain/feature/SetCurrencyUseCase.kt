@@ -7,6 +7,6 @@ class SetCurrencyUseCase @Inject constructor(
     private val cardRepository: CardRepository
 ) {
     fun execute(value: Float) {
-        cardRepository.setCurrencyValue(value)
+        cardRepository.addCurrency(value)
     }
 }

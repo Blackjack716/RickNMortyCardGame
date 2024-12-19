@@ -6,7 +6,7 @@ import javax.inject.Inject
 class IsCardsUpdatedUseCase @Inject constructor(
     private val cardRepository: CardRepository
 ) {
-    fun execute(): Boolean {
+    suspend fun execute(): Boolean {
         return cardRepository.isDatabaseUpdated()
     }
 }

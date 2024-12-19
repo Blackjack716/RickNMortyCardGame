@@ -1,9 +1,7 @@
 package com.rnm.data.remote.repository
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import com.haroldadmin.cnradapter.NetworkResponse
-import com.rnm.data.local.CardRepositoryImpl.Companion.IS_DATABASE_UP_TO_DATE
+import com.rnm.data.di.DataStoreManager
 import com.rnm.data.local.dao.CardDao
 import com.rnm.data.local.model.toNewCardEntity
 import com.rnm.data.remote.api.RickAndMortyApi
@@ -20,7 +18,7 @@ import javax.inject.Inject
 class CharactersRepositoryImpl @Inject constructor(
     private val rickAndMortyApi: RickAndMortyApi,
     private val cardDao: CardDao,
-    private val sharedPreferences: SharedPreferences
+    private val dataStoreManager: DataStoreManager
 ) : CharactersRepository {
 
     private val _characters = MutableStateFlow<List<Characters>>(emptyList())
@@ -81,9 +79,7 @@ class CharactersRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun setCardsAsUpdated() {
-        sharedPreferences.edit {
-            putBoolean(IS_DATABASE_UP_TO_DATE, true)
-        }
+    private suspend fun setCardsAsUpdated() {
+        dataStoreManager.setCardsDatabaseUpdated()
     }
 }

@@ -1,7 +1,6 @@
 package com.rnm.data.local
 
-import android.content.SharedPreferences
-import androidx.core.content.edit
+import com.rnm.data.di.DataStoreManager
 import com.rnm.data.local.dao.CardDao
 import com.rnm.data.local.model.getBetterCardRarity
 import com.rnm.data.local.model.getCardSellCost
@@ -9,12 +8,15 @@ import com.rnm.data.local.model.getCardUpgradeCost
 import com.rnm.data.local.model.toCard
 import com.rnm.domain.model.Card
 import com.rnm.domain.repository.CardRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CardRepositoryImpl @Inject constructor(
-    private val sharedPreferences: SharedPreferences,
+    private val dataStoreManager: DataStoreManager,
     private val cardDao: CardDao
 ) : CardRepository {
 
@@ -26,18 +28,18 @@ class CardRepositoryImpl @Inject constructor(
         return cardDao.getFavouriteCards().map { it.toCard() }
     }
 
-    override fun getCurrencyValue(): Float {
-        return sharedPreferences.getFloat(CURRENCY_VALUE, 0f)
+    override suspend fun getCurrencyValue(): Flow<Float> {
+        return dataStoreManager.getCurrencyValue()
     }
 
-    override fun setCurrencyValue(value: Float) {
-        sharedPreferences.edit {
-            putFloat(CURRENCY_VALUE, value)
+    override fun addCurrency(addedValue: Float) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStoreManager.addCurrencyValue(addedValue)
         }
     }
 
-    override fun isDatabaseUpdated(): Boolean {
-        return sharedPreferences.getBoolean(IS_DATABASE_UP_TO_DATE, false)
+    override suspend fun isDatabaseUpdated(): Boolean {
+        return dataStoreManager.getIsDatabaseUpdated()
     }
 
     override suspend fun upgradeCard(cardId: Int) {
