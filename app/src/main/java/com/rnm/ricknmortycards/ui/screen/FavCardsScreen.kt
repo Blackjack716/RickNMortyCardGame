@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
 
@@ -29,12 +30,7 @@ fun FavCardsScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text("Currency: XX")
-        }
+        CurrencyCounterBar()
         LazyColumn {
 
         }

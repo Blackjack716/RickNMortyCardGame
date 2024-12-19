@@ -75,11 +75,15 @@ class CharactersRepositoryImpl @Inject constructor(
             _characters.collectLatest {
                 if (errorType == null) {
                     cardDao.addCards(it.toNewCardEntity())
-                    sharedPreferences.edit {
-                        putBoolean(IS_DATABASE_UP_TO_DATE, true)
-                    }
+                    setCardsAsUpdated()
                 }
             }
+        }
+    }
+
+    private fun setCardsAsUpdated() {
+        sharedPreferences.edit {
+            putBoolean(IS_DATABASE_UP_TO_DATE, true)
         }
     }
 }

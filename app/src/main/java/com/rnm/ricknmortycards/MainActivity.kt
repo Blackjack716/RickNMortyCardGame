@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mainViewModel.test()
+        mainViewModel.collectAllCards()
+        mainViewModel.collectFavCards()
 
         enableEdgeToEdge()
         setContent {

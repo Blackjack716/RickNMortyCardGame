@@ -3,20 +3,26 @@ package com.rnm.ricknmortycards.ui
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
+import com.rnm.domain.feature.GetAllCardsUseCase
+import com.rnm.domain.feature.GetFavouriteCardsUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
-import com.rnm.ricknmortycards.ui.compose.NavBarEvent
-import com.rnm.ricknmortycards.ui.compose.RNMScreen
+import com.rnm.domain.model.Card
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val updateCharactersUseCase: UpdateCharactersUseCase
+    private val updateCharactersUseCase: UpdateCharactersUseCase,
+    private val getAllCardsUseCase: GetAllCardsUseCase,
+    private val getFavouriteCardsUseCase: GetFavouriteCardsUseCase,
 ): ViewModel() {
 
     val state = mutableStateOf(true)
+    val allCardsState = MutableStateFlow<List<Card>>(emptyList())
+    val favCardsState = MutableStateFlow<List<Card>>(emptyList())
 
     init {
         viewModelScope.launch {
@@ -24,7 +30,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun test() {
-        println("initializing vm")
+    fun collectAllCards() {
+        viewModelScope.launch {
+            getAllCardsUseCase.execute().collectLatest {
+                allCardsState.emit(it)
+            }
+        }
+
+    }
+
+    fun collectFavCards() {
+        viewModelScope.launch {
+            getFavouriteCardsUseCase.execute().collectLatest {
+                favCardsState.emit(it)
+            }
+        }
     }
 }

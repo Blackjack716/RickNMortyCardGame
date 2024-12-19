@@ -7,16 +7,12 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rnm.ricknmortycards.R
+import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
 
@@ -61,7 +58,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            CurrencyCounter()
+            CurrencyCounterBar()
             Image(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
@@ -167,29 +164,5 @@ private fun PulsatingButton(
         content()
     }
 
-}
-
-@Composable
-private fun BoxScope.CurrencyCounter() {
-    Row(
-        modifier = Modifier
-            .align(Alignment.TopEnd)
-            .border(width = 3.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp)),
-        horizontalArrangement = Arrangement.End
-    ) {
-        Image(
-            modifier = Modifier
-                .padding(vertical = 2.dp)
-                .size(30.dp),
-            imageVector = ImageVector.vectorResource(R.drawable.icon_crystal),
-            contentDescription = null
-        )
-        Text(
-            text = "100000",
-            modifier = Modifier
-                .padding(end = 4.dp)
-                .align(Alignment.CenterVertically)
-        )
-    }
 }
 
