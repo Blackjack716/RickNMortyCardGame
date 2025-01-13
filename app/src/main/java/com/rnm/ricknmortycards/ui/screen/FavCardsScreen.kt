@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
@@ -25,6 +26,7 @@ fun FavCardsScreenPreview() {
 fun FavCardsScreen(
     modifier: Modifier = Modifier,
     onNavBardEvent: (NavBarEvent) -> Unit,
+    favCardsState: List<Card> = emptyList(),
 ) {
     Box(
         modifier = modifier

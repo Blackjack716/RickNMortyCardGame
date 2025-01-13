@@ -3,6 +3,7 @@ package com.rnm.data.di
 import android.content.Context
 import androidx.room.Room
 import com.rnm.data.local.AppDatabase
+import com.rnm.data.local.DataStoreManager
 import com.rnm.data.local.dao.CardDao
 import dagger.Module
 import dagger.Provides

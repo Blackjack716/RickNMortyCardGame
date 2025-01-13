@@ -1,4 +1,4 @@
-package com.rnm.data.di
+package com.rnm.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,7 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.rnm.domain.model.SortType
+import com.rnm.domain.model.toInt
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -57,8 +60,15 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
+    suspend fun setSortType(sortType: SortType) {
+        dataStore.edit {
+            it[SORT_TYPE_KEY] = sortType.toInt()
+        }
+    }
+
     companion object {
         val IS_CARDS_UPDATED_KEY = booleanPreferencesKey("isCardsUpdated")
         val CURRENCY_VALUE_KEY = floatPreferencesKey("currencyValueKey")
+        val SORT_TYPE_KEY = intPreferencesKey("sortTypeKey")
     }
 }

@@ -6,6 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
+import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.ui.screen.AllCardsScreen
 import com.rnm.ricknmortycards.ui.screen.FavCardsScreen
 import com.rnm.ricknmortycards.ui.screen.HomeScreen
@@ -13,6 +15,8 @@ import com.rnm.ricknmortycards.ui.screen.HomeScreen
 @Composable
 fun RNMNavigation(
     modifier: Modifier = Modifier,
+    allCardsState: List<Card> = emptyList(),
+    favCardsState: List<Card> = emptyList()
 ) {
     val navController = rememberNavController()
 
@@ -33,7 +37,8 @@ fun RNMNavigation(
                 modifier = modifier,
                 onNavBardEvent = { event ->
                     onNavEvent(event, navController)
-                }
+                },
+                allCardsState = allCardsState
             )
         }
         composable(route = RNMScreen.FavCards.name) {
@@ -41,7 +46,8 @@ fun RNMNavigation(
                 modifier = modifier,
                 onNavBardEvent = { event ->
                     onNavEvent(event, navController)
-                }
+                },
+                favCardsState = favCardsState
             )
         }
     }
@@ -51,8 +57,17 @@ fun RNMNavigation(
 
 private fun onNavEvent(event: NavBarEvent, navController: NavController) {
     when (event) {
-        NavBarEvent.OnAllCardClicked -> navController.navigate(RNMScreen.AllCards.name)
-        NavBarEvent.OnFavCardClicked -> navController.navigate(RNMScreen.FavCards.name)
-        NavBarEvent.OnHomeClicked -> navController.navigate(RNMScreen.Home.name)
+        NavBarEvent.OnAllCardClicked -> navController.navigate(
+            RNMScreen.AllCards.name,
+            navOptions { popUpTo(RNMScreen.AllCards.name) { inclusive = true } }
+        )
+        NavBarEvent.OnFavCardClicked -> navController.navigate(
+            RNMScreen.FavCards.name,
+            navOptions { popUpTo(RNMScreen.FavCards.name) { inclusive = true } }
+        )
+        NavBarEvent.OnHomeClicked -> navController.navigate(
+            RNMScreen.Home.name,
+            navOptions { popUpTo(RNMScreen.Home.name) { inclusive = true } }
+        )
     }
 }

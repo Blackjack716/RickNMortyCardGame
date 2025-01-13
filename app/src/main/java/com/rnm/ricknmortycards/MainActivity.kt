@@ -8,6 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.rnm.ricknmortycards.ui.MainViewModel
 import com.rnm.ricknmortycards.ui.compose.RNMNavigation
@@ -26,12 +31,37 @@ class MainActivity : ComponentActivity() {
         mainViewModel.collectAllCards()
         mainViewModel.collectFavCards()
 
+
+
         enableEdgeToEdge()
         setContent {
+
+            var allCardsState by remember {
+                mutableStateOf(mainViewModel.allCardsState.value)
+            }
+            var favCardsState by remember {
+                mutableStateOf(mainViewModel.favCardsState.value)
+            }
+
+            LaunchedEffect(mainViewModel.allCardsState) {
+                mainViewModel.allCardsState.collect {
+                    allCardsState = it
+                }
+
+            }
+            LaunchedEffect(mainViewModel.favCardsState) {
+                mainViewModel.allCardsState.collect {
+                    favCardsState = it
+                }
+
+            }
+
             RickNMortyCardsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RNMNavigation(
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        allCardsState = allCardsState,
+                        favCardsState = favCardsState
                     )
                 }
             }

@@ -1,6 +1,5 @@
 package com.rnm.data.local
 
-import com.rnm.data.di.DataStoreManager
 import com.rnm.data.local.dao.CardDao
 import com.rnm.data.local.model.getBetterCardRarity
 import com.rnm.data.local.model.getCardSellCost

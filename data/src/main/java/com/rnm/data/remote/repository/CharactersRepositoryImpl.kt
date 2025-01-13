@@ -1,7 +1,7 @@
 package com.rnm.data.remote.repository
 
 import com.haroldadmin.cnradapter.NetworkResponse
-import com.rnm.data.di.DataStoreManager
+import com.rnm.data.local.DataStoreManager
 import com.rnm.data.local.dao.CardDao
 import com.rnm.data.local.model.toNewCardEntity
 import com.rnm.data.remote.api.RickAndMortyApi
