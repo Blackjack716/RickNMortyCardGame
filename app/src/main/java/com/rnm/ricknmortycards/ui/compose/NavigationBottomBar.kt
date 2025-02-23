@@ -18,8 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rnm.ricknmortycards.R
+
+@Preview
+@Composable
+fun NavigationBottomBarPreview() {
+    NavigationBottomBar(
+        modifier = Modifier,
+        onEvent = {}
+    )
+}
 
 @Composable
 fun NavigationBottomBar(
@@ -29,7 +39,7 @@ fun NavigationBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(60.dp)
             .background(Color.Red)
             .then(modifier),
         horizontalArrangement = Arrangement.SpaceEvenly
