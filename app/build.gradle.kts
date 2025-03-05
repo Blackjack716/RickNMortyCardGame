@@ -89,4 +89,5 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.compose.lifecycle)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.accompanist.drawablepainter)
 }
