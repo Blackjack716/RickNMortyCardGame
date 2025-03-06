@@ -31,3 +31,15 @@ fun List<CardEntity>.toCard(): List<Card> {
         )
     }
 }
+
+fun CardEntity.toCard(): Card {
+    return Card(
+        name = this.name,
+        photoUrl = this.photoUrl,
+        isFavourite = this.isFavourite,
+        isOwned = this.isOwned,
+        rarity = this.rarity,
+        sellValue = this.sellValue,
+        upgradeCost = this.upgradeCost
+    )
+}

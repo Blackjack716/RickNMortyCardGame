@@ -9,6 +9,8 @@ interface CardRepository {
     suspend fun getCurrencyValue(): Flow<Float>
     fun addCurrency(addedValue: Float)
     suspend fun isDatabaseUpdated(): Boolean
-    suspend fun upgradeCard(cardId: Int)
+    suspend fun upgradeCard(cardId: Int, rarity: Int? = null)
     suspend fun sellCard(cardId: Int)
+    suspend fun getCardCount(): Int
+    suspend fun getCard(cardId: Int): Flow<Card>
 }

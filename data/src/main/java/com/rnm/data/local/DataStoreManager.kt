@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.rnm.domain.model.Card
 import com.rnm.domain.model.SortType
 import com.rnm.domain.model.toInt
 import dagger.hilt.android.qualifiers.ApplicationContext

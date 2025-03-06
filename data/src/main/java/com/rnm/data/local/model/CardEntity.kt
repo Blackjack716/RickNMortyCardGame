@@ -25,21 +25,39 @@ data class CardEntity(
     @ColumnInfo(name = "sellValue") val sellValue: Float?
 )
 
-fun CardEntity.getCardUpgradeCost(): Float {
-    return when (rarity) {
-        null -> UPGRADE_COST_1
-        1 -> UPGRADE_COST_2
-        2 -> UPGRADE_COST_3
-        else -> 0f
+fun CardEntity.getCardUpgradeCost(cardRarity: Int? = null): Float {
+    return if (cardRarity != null) {
+        when (cardRarity) {
+            1 -> UPGRADE_COST_2
+            2 -> UPGRADE_COST_3
+            else -> 0f
+        }
+    } else {
+        when (rarity) {
+            null -> UPGRADE_COST_1
+            1 -> UPGRADE_COST_2
+            2 -> UPGRADE_COST_3
+            else -> 0f
+        }
     }
+
 }
 
-fun CardEntity.getCardSellCost(): Float {
-    return when (rarity) {
-        1 -> SELL_VALUE_1
-        2 -> SELL_VALUE_2
-        3 -> SELL_VALUE_3
-        else -> 0f
+fun CardEntity.getCardSellCost(cardRarity: Int? = null): Float {
+    return if (cardRarity != null) {
+        when (cardRarity) {
+            1 -> SELL_VALUE_1
+            2 -> SELL_VALUE_2
+            3 -> SELL_VALUE_3
+            else -> 0f
+        }
+    } else {
+        when (rarity) {
+            1 -> SELL_VALUE_1
+            2 -> SELL_VALUE_2
+            3 -> SELL_VALUE_3
+            else -> 0f
+        }
     }
 }
 

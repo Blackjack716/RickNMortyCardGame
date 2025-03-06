@@ -16,7 +16,9 @@ import com.rnm.ricknmortycards.ui.screen.HomeScreen
 fun RNMNavigation(
     modifier: Modifier = Modifier,
     allCardsState: List<Card> = emptyList(),
-    favCardsState: List<Card> = emptyList()
+    favCardsState: List<Card> = emptyList(),
+    homeCardState: Card? = null,
+    onPortalEvent: (PortalEvent) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -29,7 +31,9 @@ fun RNMNavigation(
                 modifier = modifier,
                 onNavBardEvent = { event ->
                     onNavEvent(event, navController)
-                }
+                },
+                onPortalEvent = onPortalEvent,
+                cardState = homeCardState
             )
         }
         composable(route = RNMScreen.AllCards.name) {

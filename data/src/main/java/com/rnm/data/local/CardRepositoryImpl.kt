@@ -10,6 +10,10 @@ import com.rnm.domain.repository.CardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,8 +23,12 @@ class CardRepositoryImpl @Inject constructor(
     private val cardDao: CardDao
 ) : CardRepository {
 
+    private var cardCount: MutableStateFlow<Int?> = MutableStateFlow(null)
+
     override suspend fun getAllCards(): Flow<List<Card>> {
-        return cardDao.getAllCards().map { it.toCard() }
+        val cards = cardDao.getAllCards()
+        cardCount.value = cards.map { it.size }.first()
+        return cards.map { it.toCard() }
     }
 
     override suspend fun getFavCards(): Flow<List<Card>> {
@@ -41,18 +49,27 @@ class CardRepositoryImpl @Inject constructor(
         return dataStoreManager.getIsDatabaseUpdated()
     }
 
-    override suspend fun upgradeCard(cardId: Int) {
-        val card = cardDao.getCard(cardId)
-        card.collect {
-            cardDao.updateCard(
-                it.copy(
-                    isOwned = true,
-                    rarity = it.getBetterCardRarity(),
-                    upgradeCost = it.getCardUpgradeCost(),
-                    sellValue = it.getCardSellCost()
+    override suspend fun upgradeCard(cardId: Int, rarity: Int?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val card = cardDao.getCard(cardId).first()
+            if (rarity != null) {
+                cardDao.updateCard(
+                    card.copy(
+                        rarity = rarity,
+                        upgradeCost = card.getCardUpgradeCost(rarity),
+                        sellValue = card.getCardSellCost(rarity)
+                    )
                 )
-            )
-
+            } else {
+                cardDao.updateCard(
+                    card.copy(
+                        isOwned = true,
+                        rarity = card.getBetterCardRarity(),
+                        upgradeCost = card.getCardUpgradeCost(),
+                        sellValue = card.getCardSellCost()
+                    )
+                )
+            }
         }
     }
 
@@ -70,6 +87,15 @@ class CardRepositoryImpl @Inject constructor(
 
         }
     }
+
+    override suspend fun getCardCount(): Int {
+        return cardCount.value ?: cardDao.getAllCards().map { it.size }.first()
+    }
+
+    override suspend fun getCard(cardId: Int): Flow<Card> {
+        return cardDao.getCard(cardId).map { it.toCard() }
+    }
+
 
     companion object {
         const val CURRENCY_VALUE = "currencyValue"

@@ -42,6 +42,9 @@ class MainActivity : ComponentActivity() {
             var favCardsState by remember {
                 mutableStateOf(mainViewModel.favCardsState.value)
             }
+            var homeCardState by remember {
+                mutableStateOf(mainViewModel.homeCardState.value)
+            }
 
             LaunchedEffect(mainViewModel.allCardsState) {
                 mainViewModel.allCardsState.collect {
@@ -55,13 +58,21 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+            LaunchedEffect(mainViewModel.homeCardState) {
+                mainViewModel.homeCardState.collect {
+                    homeCardState = it
+                }
+
+            }
 
             RickNMortyCardsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     RNMNavigation(
                         modifier = Modifier.padding(innerPadding),
                         allCardsState = allCardsState,
-                        favCardsState = favCardsState
+                        favCardsState = favCardsState,
+                        homeCardState = homeCardState,
+                        onPortalEvent = mainViewModel::onPortalEvent
                     )
                 }
             }
