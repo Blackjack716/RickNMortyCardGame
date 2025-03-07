@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -22,6 +20,11 @@ class CardRepositoryImpl @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val cardDao: CardDao
 ) : CardRepository {
+
+    init {
+        val energyManager = EnergyManager(dataStoreManager)
+        energyManager.start()
+    }
 
     private var cardCount: MutableStateFlow<Int?> = MutableStateFlow(null)
 
@@ -94,6 +97,18 @@ class CardRepositoryImpl @Inject constructor(
 
     override suspend fun getCard(cardId: Int): Flow<Card> {
         return cardDao.getCard(cardId).map { it.toCard() }
+    }
+
+    override suspend fun getEnergyLevel(): Flow<Int> {
+        return dataStoreManager.getEnergyLevel()
+    }
+
+    override suspend fun setEnergyLevel(energyLevel: Int) {
+        dataStoreManager.setEnergyLevel(energyLevel)
+    }
+
+    override suspend fun getEnergyRechargeTime(): Flow<Long> {
+        return dataStoreManager.getEnergyRechargeTime()
     }
 
 

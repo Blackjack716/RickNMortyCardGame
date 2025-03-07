@@ -1,6 +1,7 @@
 package com.rnm.domain.model
 
 data class Card(
+    val id: Int?,
     val name: String?,
     val photoUrl: String?,
     val isFavourite: Boolean?,

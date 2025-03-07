@@ -61,6 +61,10 @@ class MainViewModel @Inject constructor(
                     homeCardState.emit(getRandomCardUseCase.execute())
                 }
             }
+            PortalEvent.OnPortalDismissed -> {
+
+            }
+            is PortalEvent.OnPortalSellButtonClicked -> TODO()
         }
     }
 }

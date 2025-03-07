@@ -21,6 +21,7 @@ fun List<Characters>.toNewCardEntity(): List<CardEntity> {
 fun List<CardEntity>.toCard(): List<Card> {
     return this.map { cardEntity ->
         Card(
+            id = cardEntity.id,
             name = cardEntity.name,
             photoUrl = cardEntity.photoUrl,
             isFavourite = cardEntity.isFavourite,
@@ -34,6 +35,7 @@ fun List<CardEntity>.toCard(): List<Card> {
 
 fun CardEntity.toCard(): Card {
     return Card(
+        id = this.id,
         name = this.name,
         photoUrl = this.photoUrl,
         isFavourite = this.isFavourite,

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.rnm.domain.model.Card
 import com.rnm.domain.model.SortType
@@ -67,9 +68,36 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
+    suspend fun setEnergyLevel(energyLevel: Int) {
+        dataStore.edit {
+            it[ENERGY_LEVEL_KEY] = energyLevel
+        }
+    }
+
+    fun getEnergyLevel(): Flow<Int> {
+        return dataStore.data.map {
+            it[ENERGY_LEVEL_KEY] ?: 10
+        }
+    }
+
+    fun getEnergyRechargeTime(): Flow<Long> {
+        return dataStore.data.map {
+            it[ENERGY_RECHARGE_TIME_KEY] ?: 0
+        }
+    }
+
+    suspend fun setEnergyRechargeTime(time: Long) {
+        dataStore.edit {
+            it[ENERGY_RECHARGE_TIME_KEY] = time
+        }
+    }
+
     companion object {
         val IS_CARDS_UPDATED_KEY = booleanPreferencesKey("isCardsUpdated")
         val CURRENCY_VALUE_KEY = floatPreferencesKey("currencyValueKey")
         val SORT_TYPE_KEY = intPreferencesKey("sortTypeKey")
+        val ENERGY_LEVEL_KEY = intPreferencesKey("energyLevelKey")
+        val ENERGY_RECHARGE_TIME_KEY = longPreferencesKey("energyRechargeTimeKey")
+
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -42,8 +45,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat.getDrawable
 import coil3.compose.AsyncImage
@@ -106,8 +111,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 30.dp)
-                    .fillMaxWidth()
-                ,
+                    .fillMaxWidth(),
                 imageVector = ImageVector.vectorResource(R.drawable.portalgun_home),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
@@ -116,8 +120,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 190.dp)
-                    .width(80.dp)
-                ,
+                    .width(80.dp),
                 imageVector = ImageVector.vectorResource(R.drawable.glassfluidgreen_home),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth
@@ -127,8 +130,7 @@ fun HomeScreen(
                     .align(Alignment.BottomStart)
                     .padding(bottom = 85.dp, start = 44.dp, end = 44.dp)
                     .fillMaxWidth()
-                    .graphicsLayer(rotationX = 20f)
-                ,
+                    .graphicsLayer(rotationX = 20f),
                 text = "X USES LEFT",
                 color = Color.Red
             )
@@ -137,8 +139,7 @@ fun HomeScreen(
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 85.dp, end = 44.dp, start = 44.dp)
                     .fillMaxWidth()
-                    .graphicsLayer(rotationX = 20f)
-                ,
+                    .graphicsLayer(rotationX = 20f),
                 text = "RECHARGING... XX:XX",
                 color = Color.Red,
                 textAlign = TextAlign.End
@@ -168,6 +169,11 @@ fun HomeScreen(
             NavigationBottomBar(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onEvent = onNavBardEvent
+            )
+            CardDialog(
+                onDismissRequest = { openPortal = false },
+                cardState = cardState,
+                onPortalEvent = onPortalEvent
             )
 
         }
@@ -240,7 +246,7 @@ private fun CardDialog(
                 modifier = Modifier
                     .size(width = 200.dp, height = 280.dp)
                     .align(Alignment.CenterHorizontally)
-                    .background(color = Color.Cyan)
+                    .background(color = Color.Transparent)
             ) {
                 var isLoading by remember {
                     mutableStateOf(true)
@@ -290,40 +296,54 @@ private fun CardDialog(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(top = 2.dp, start = 4.dp)
-                        .size(30.dp)
-                        .alpha(0.5f)
-                        .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                        .padding(top = 8.dp, start = 8.dp)
+                        .size(width = 38.dp, height = 16.dp)
                 ) {
-                    Text(cardState?.name ?: "")
+                    Text(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        text = cardState?.name ?: "0",
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
+                    )
                 }
 
-                val bottomTextColorStops = arrayOf(
-                    0.0f to Color.Black,
-                    0.5f to Color.Black,
-                    1f to Color.Transparent
-                )
-
-                val bottomTextGradient = Brush.verticalGradient(
-                    colorStops = bottomTextColorStops,
-                    startY = Float.POSITIVE_INFINITY,
-                    endY = 0.0f
-                )
+                var cardNameFontSize by remember {
+                    mutableStateOf(24.sp)
+                }
+                var readyToDraw by remember {
+                    mutableStateOf(false)
+                }
 
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .alpha(0.4f)
-                        .background(brush = bottomTextGradient, shape = RoundedCornerShape(4.dp))
-                        .padding(top = 8.dp)
+                        .height(100.dp)
+                        //.background(color = Color.Red)
+                        .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     Text(
-                        text = "${cardState?.name}",
+                        text = cardState?.name ?: ("test test test test test test" +
+                                "test test test test test test" +
+                                "test test test test test test"),
+                        textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .padding(horizontal = 4.dp, vertical = 2.dp)
-                        ,
-                        color = Color.White
+                            .padding(horizontal = 16.dp, vertical = 2.dp)
+                            .align(Alignment.Center)
+                            .drawWithContent {
+                                if (readyToDraw) drawContent()
+                            },
+                        overflow = TextOverflow.Ellipsis,
+                        color = Color(0xFF000000),
+                        onTextLayout = { textLayoutResult ->
+                            if (textLayoutResult.hasVisualOverflow) {
+                                cardNameFontSize *= 0.9f
+                            } else {
+                                readyToDraw = true
+                            }
+                        },
+                        fontSize = cardNameFontSize
                     )
                 }
             }
@@ -332,7 +352,9 @@ private fun CardDialog(
                 modifier = Modifier
                     .widthIn(min = 150.dp, max = 250.dp)
                     .align(Alignment.CenterHorizontally),
-                onClick = {}
+                onClick = {
+                    onDismissRequest()
+                }
             ) {
                 Text(
                     modifier = Modifier
@@ -345,7 +367,14 @@ private fun CardDialog(
                 modifier = Modifier
                     .widthIn(min = 150.dp, max = 250.dp)
                     .align(Alignment.CenterHorizontally),
-                onClick = {}
+                onClick = {
+                    onPortalEvent(
+                        PortalEvent.OnPortalSellButtonClicked(
+                            cardState?.id ?: 0,
+                            cardState?.sellValue ?: 0f
+                        )
+                    )
+                }
             ) {
                 Text(
                     modifier = Modifier
@@ -354,13 +383,6 @@ private fun CardDialog(
                 )
             }
         }
-
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
 
     }
 }
