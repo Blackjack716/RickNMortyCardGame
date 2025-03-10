@@ -1,5 +1,7 @@
 package com.rnm.ricknmortycards.ui.screen
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -12,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +37,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
@@ -44,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -170,11 +176,11 @@ fun HomeScreen(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onEvent = onNavBardEvent
             )
-            CardDialog(
-                onDismissRequest = { openPortal = false },
-                cardState = cardState,
-                onPortalEvent = onPortalEvent
-            )
+//            CardDialog(
+//                onDismissRequest = { openPortal = false },
+//                cardState = cardState,
+//                onPortalEvent = onPortalEvent
+//            )
 
         }
     }
@@ -238,13 +244,16 @@ private fun CardDialog(
                     .align(Alignment.End)
                     .size(30.dp)
                     .border(width = 2.dp, shape = CircleShape, color = Color.LightGray)
-                    .alpha(0.6f),
+                    .alpha(0.6f)
+                    .clickable {
+                        onDismissRequest()
+                    },
                 imageVector = ImageVector.vectorResource(R.drawable.ic_close),
-                contentDescription = null
+                contentDescription = null,
             )
             Box(
                 modifier = Modifier
-                    .size(width = 200.dp, height = 280.dp)
+                    .size(width = 192.dp, height = 280.dp)
                     .align(Alignment.CenterHorizontally)
                     .background(color = Color.Transparent)
             ) {
@@ -252,12 +261,23 @@ private fun CardDialog(
                     mutableStateOf(true)
                 }
 
+                val backgroundColors: Pair<Color, Color> = when(cardState?.rarity) {
+                    Card.RARITY_1 -> Color(0xFF00A6FF) to Color(0x6600A6FF)
+                    Card.RARITY_2 -> Color(0xFF7A00FF) to Color(0x667A00FF)
+                    Card.RARITY_3 -> Color(0xFFFF0A00) to Color(0x66FF0A00)
+                    else -> Color(0xFF000000) to Color(0x66000000)
+                }
+                AnimatedCardBackground(
+                    initialColor = backgroundColors.first,
+                    targetColor = backgroundColors.second
+                )
+
 
                 AsyncImage(
                     model = cardState?.photoUrl,
                     contentDescription = cardState?.name,
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(10.dp)
                         .fillMaxHeight()
                         .align(Alignment.Center)
                         .then(
@@ -288,7 +308,7 @@ private fun CardDialog(
                         .padding(vertical = 0.dp)
                         .fillMaxSize()
                         .align(Alignment.Center),
-                    imageVector = ImageVector.vectorResource(R.drawable.photo_frame_black),
+                    imageVector = ImageVector.vectorResource(R.drawable.card_frame_black),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds
                 )
@@ -296,13 +316,16 @@ private fun CardDialog(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(top = 8.dp, start = 8.dp)
-                        .size(width = 38.dp, height = 16.dp)
+                        .padding(top = 15.dp, start = 16.dp)
+                        .size(width = 32.dp, height = 16.dp)
                 ) {
                     Text(
                         modifier = Modifier
-                            .fillMaxSize(),
-                        text = cardState?.name ?: "0",
+                            .align(Alignment.Center),
+                        text = cardState?.id.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        lineHeight = 8.sp,
                         textAlign = TextAlign.Center,
                         color = Color.Black
                     )
@@ -320,8 +343,7 @@ private fun CardDialog(
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .height(100.dp)
-                        //.background(color = Color.Red)
-                        .padding(top = 8.dp, bottom = 8.dp)
+                        .padding(bottom = 16.dp)
                 ) {
                     Text(
                         text = cardState?.name ?: ("test test test test test test" +
@@ -384,6 +406,32 @@ private fun CardDialog(
             }
         }
 
+    }
+}
+
+@Composable
+fun BoxScope.AnimatedCardBackground(initialColor: Color, targetColor: Color) {
+    val animatedColor by rememberInfiniteTransition().animateColor(
+        initialValue = initialColor,
+        targetValue = targetColor,
+        animationSpec = infiniteRepeatable(
+            animation = tween(6000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "colorAnimation"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .align(Alignment.Center)
+            .blur(radius = 30.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = animatedColor, shape = RoundedCornerShape(5.dp))
+        ) {}
     }
 }
 
