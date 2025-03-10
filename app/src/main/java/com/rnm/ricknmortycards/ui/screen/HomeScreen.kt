@@ -1,7 +1,6 @@
 package com.rnm.ricknmortycards.ui.screen
 
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -30,7 +29,6 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +40,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,6 +63,12 @@ import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
+import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
+import java.text.DateFormat.getDateInstance
+import java.text.DateFormat.getTimeInstance
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Preview(showBackground = true)
 @Composable
@@ -73,7 +76,7 @@ private fun HomeScreenPreview() {
     HomeScreen(
         onNavBardEvent = {},
         onPortalEvent = {},
-        cardState = null
+        state = null
     )
 }
 
@@ -81,8 +84,7 @@ private fun HomeScreenPreview() {
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavBardEvent: (NavBarEvent) -> Unit,
-    //viewModel: MainViewModel = viewModel()
-    cardState: Card?,
+    state: HomeState?,
     onPortalEvent: (PortalEvent) -> Unit
 ) {
     var openPortal by remember {
@@ -92,7 +94,7 @@ fun HomeScreen(
     if (openPortal) {
         CardDialog(
             onDismissRequest = { openPortal = false },
-            cardState = cardState,
+            state = state,
             onPortalEvent = onPortalEvent,
         )
     }
@@ -137,7 +139,7 @@ fun HomeScreen(
                     .padding(bottom = 85.dp, start = 44.dp, end = 44.dp)
                     .fillMaxWidth()
                     .graphicsLayer(rotationX = 20f),
-                text = "X USES LEFT",
+                text = "${state?.energyLevelState ?: 0} USES LEFT",
                 color = Color.Red
             )
             Text(
@@ -146,7 +148,7 @@ fun HomeScreen(
                     .padding(bottom = 85.dp, end = 44.dp, start = 44.dp)
                     .fillMaxWidth()
                     .graphicsLayer(rotationX = 20f),
-                text = "RECHARGING... XX:XX",
+                text = "RECHARGING... ${convertLongToTimeLeft(state?.energyRechargeTimeState)}",
                 color = Color.Red,
                 textAlign = TextAlign.End
             )
@@ -230,7 +232,7 @@ private fun PulsatingButton(
 @Composable
 private fun CardDialog(
     onDismissRequest: () -> Unit = {},
-    cardState: Card?,
+    state: HomeState?,
     onPortalEvent: (PortalEvent) -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -261,7 +263,7 @@ private fun CardDialog(
                     mutableStateOf(true)
                 }
 
-                val backgroundColors: Pair<Color, Color> = when(cardState?.rarity) {
+                val backgroundColors: Pair<Color, Color> = when(state?.cardState?.rarity) {
                     Card.RARITY_1 -> Color(0xFF00A6FF) to Color(0x6600A6FF)
                     Card.RARITY_2 -> Color(0xFF7A00FF) to Color(0x667A00FF)
                     Card.RARITY_3 -> Color(0xFFFF0A00) to Color(0x66FF0A00)
@@ -274,8 +276,8 @@ private fun CardDialog(
 
 
                 AsyncImage(
-                    model = cardState?.photoUrl,
-                    contentDescription = cardState?.name,
+                    model = state?.cardState?.photoUrl,
+                    contentDescription = state?.cardState?.name,
                     modifier = Modifier
                         .padding(10.dp)
                         .fillMaxHeight()
@@ -322,7 +324,7 @@ private fun CardDialog(
                     Text(
                         modifier = Modifier
                             .align(Alignment.Center),
-                        text = cardState?.id.toString(),
+                        text = state?.cardState?.id.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         lineHeight = 8.sp,
@@ -346,7 +348,7 @@ private fun CardDialog(
                         .padding(bottom = 16.dp)
                 ) {
                     Text(
-                        text = cardState?.name ?: ("test test test test test test" +
+                        text = state?.cardState?.name ?: ("test test test test test test" +
                                 "test test test test test test" +
                                 "test test test test test test"),
                         textAlign = TextAlign.Center,
@@ -392,8 +394,8 @@ private fun CardDialog(
                 onClick = {
                     onPortalEvent(
                         PortalEvent.OnPortalSellButtonClicked(
-                            cardState?.id ?: 0,
-                            cardState?.sellValue ?: 0f
+                            state?.cardState?.id ?: 0,
+                            state?.cardState?.sellValue ?: 0f
                         )
                     )
                 }
@@ -433,5 +435,14 @@ fun BoxScope.AnimatedCardBackground(initialColor: Color, targetColor: Color) {
                 .background(color = animatedColor, shape = RoundedCornerShape(5.dp))
         ) {}
     }
+}
+
+private fun convertLongToTimeLeft(time: Long?): String {
+    if (time == null) return ""
+
+    val currentTime = System.currentTimeMillis()
+    val date = Date(time - currentTime)
+    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    return format.format(date)
 }
 

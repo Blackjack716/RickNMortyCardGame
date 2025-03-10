@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.rnm.ricknmortycards.ui.MainViewModel
 import com.rnm.ricknmortycards.ui.compose.RNMNavigation
-import com.rnm.ricknmortycards.ui.screen.HomeScreen
 import com.rnm.ricknmortycards.ui.theme.RickNMortyCardsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,8 +41,8 @@ class MainActivity : ComponentActivity() {
             var favCardsState by remember {
                 mutableStateOf(mainViewModel.favCardsState.value)
             }
-            var homeCardState by remember {
-                mutableStateOf(mainViewModel.homeCardState.value)
+            var homeState by remember {
+                mutableStateOf(mainViewModel.homeState.value)
             }
 
             LaunchedEffect(mainViewModel.allCardsState) {
@@ -58,9 +57,9 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
-            LaunchedEffect(mainViewModel.homeCardState) {
-                mainViewModel.homeCardState.collect {
-                    homeCardState = it
+            LaunchedEffect(mainViewModel.homeState) {
+                mainViewModel.homeState.collect {
+                    homeState = it
                 }
 
             }
@@ -71,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         allCardsState = allCardsState,
                         favCardsState = favCardsState,
-                        homeCardState = homeCardState,
+                        homeState = homeState,
                         onPortalEvent = mainViewModel::onPortalEvent
                     )
                 }
