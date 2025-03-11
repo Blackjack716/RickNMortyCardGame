@@ -70,6 +70,7 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
 
     suspend fun setEnergyLevel(energyLevel: Int) {
         dataStore.edit {
+            println("timer: edit energyLevel $energyLevel")
             it[ENERGY_LEVEL_KEY] = energyLevel
         }
     }

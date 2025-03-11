@@ -21,8 +21,9 @@ class CardRepositoryImpl @Inject constructor(
     private val cardDao: CardDao
 ) : CardRepository {
 
+    private val energyManager: EnergyManager = EnergyManager(dataStoreManager)
+
     init {
-        val energyManager = EnergyManager(dataStoreManager)
         energyManager.start()
     }
 
@@ -100,11 +101,11 @@ class CardRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getEnergyLevel(): Flow<Int> {
-        return dataStoreManager.getEnergyLevel()
+        return energyManager.getEnergyLevel()
     }
 
     override suspend fun setEnergyLevel(energyLevel: Int) {
-        dataStoreManager.setEnergyLevel(energyLevel)
+        energyManager.setEnergyLevel(energyLevel)
     }
 
     override suspend fun getEnergyRechargeTime(): Flow<Long> {

@@ -4,6 +4,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -13,104 +16,84 @@ class EnergyManager @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) {
     private var timer: Job? = null
+    private val energyLevel = MutableStateFlow(10)
+    private val _endTime = MutableStateFlow(0L)
 
     fun start() {
-        checkIfNeedRecharging()
         manageTimer()
     }
 
     private fun manageTimer() {
         CoroutineScope(Dispatchers.IO).launch {
             dataStoreManager.getEnergyRechargeTime().collectLatest {
-                if (it != 0L) {
-                    startEnergyRechargeTimer()
-                }
+                checkEnergy(it)
+                _endTime.value = it
             }
         }
     }
 
-    private fun checkIfNeedRecharging() {
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStoreManager.getEnergyLevel().collectLatest {
-                if (it < 10) {
-                    val endTime = dataStoreManager.getEnergyRechargeTime().first()
-                    if (endTime > System.currentTimeMillis()) {
-                        println("timer: energy $it")
-                        val difference = endTime - System.currentTimeMillis()
-                        val differenceInUses = difference / 600000 + 1
-                        val additionalTime = (10 - (differenceInUses + it) * 600000) + difference
-                        val newEndTime = endTime + additionalTime
-                        dataStoreManager.setEnergyRechargeTime(newEndTime)
-                    } else {
-                        val newEndTime = System.currentTimeMillis() + (600000 * (10 - it))
-                        dataStoreManager.setEnergyRechargeTime(newEndTime)
-                    }
-                } else {
-                    println("timer: 10 energy")
-                    dataStoreManager.setEnergyRechargeTime(0L)
-                }
-            }
+    private fun checkEnergy(endTime: Long) {
+        if (endTime <= System.currentTimeMillis()) {
+            energyLevel.value = 10
+        } else {
+            val difference = endTime - System.currentTimeMillis()
+            val differenceInUses = (difference / RECHARGE_TIME).toInt()
+            val additionalTime = difference % RECHARGE_TIME
 
+            energyLevel.value = 10 - (differenceInUses + 1)
+            timer?.cancel()
+            println("timer: check Energy $endTime ${energyLevel.value} $difference")
+            setSimpleTimer(
+                endTime = if (additionalTime > 1)
+                    additionalTime + System.currentTimeMillis()
+                else
+                    RECHARGE_TIME + System.currentTimeMillis(),
+                onFinish = {
+                    energyLevel.value += 1
+                    checkEnergy(_endTime.value)
+                })
+            timer?.start()
         }
     }
 
-    private suspend fun startEnergyRechargeTimer() {
-        println("timer: setTimer")
-        timer?.cancel()
+    suspend fun setEnergyLevel(energy: Int) {
         val endTime = dataStoreManager.getEnergyRechargeTime().first()
-        val firstTick = (endTime - System.currentTimeMillis()) % 600000
+        println("timer: endTIme = $endTime")
+        if (endTime > System.currentTimeMillis()) {
+            dataStoreManager.setEnergyRechargeTime(endTime + (RECHARGE_TIME * energy))
+        } else {
+            dataStoreManager.setEnergyRechargeTime(System.currentTimeMillis() + (RECHARGE_TIME * energy * -1))
+        }
 
-        timer = setEnergyRechargeTimer(
-            endTime = endTime,
-            tickSynchro = 15000,
-            onFinish = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    setEnergyLevel(10)
-                }
-            },
-            onTick = {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val energyLevel = dataStoreManager.getEnergyLevel().first()
-                    setEnergyLevel(energyLevel + 1)
-                }
-            },
-            onTickSync = {}
-        )
-        timer?.start()
     }
 
-    private fun setEnergyRechargeTimer(
+    fun getEnergyLevel(): Flow<Int> {
+        return energyLevel.asStateFlow()
+    }
+
+    private suspend fun startNewTimerIfFinished() {
+        if (dataStoreManager.getEnergyRechargeTime().first() > System.currentTimeMillis()) {
+            setSimpleTimer(RECHARGE_TIME + System.currentTimeMillis()) {
+                energyLevel.value += 1
+            }
+        }
+    }
+
+    private fun setSimpleTimer(
         endTime: Long,
-        tick: Long = 600000,
-        delayMillis: Long = 1000,
-        tickSynchro: Long = 15000,
-        firstTick: Long = 600000,
+        delayMillis: Long = 10000,
         onFinish: () -> Unit,
-        onTick: () -> Unit,
-        onTickSync: () -> Unit
     ) = CoroutineScope(Dispatchers.Default).launch {
         println("timer: startTimer")
 
-        val currentTime = System.currentTimeMillis()
-        var tickTime = currentTime + firstTick
-        var tickSynchroTime = currentTime + tickSynchro
-
         while (System.currentTimeMillis() < endTime) {
-            if (System.currentTimeMillis() > tickTime) {
-                onTick()
-                tickTime = System.currentTimeMillis() + tick
-            }
-            if (System.currentTimeMillis() > tickSynchroTime) {
-                onTickSync()
-                tickSynchroTime = System.currentTimeMillis() + tickSynchro
-            }
             delay(delayMillis)
         }
         onFinish()
     }
 
-    private suspend fun setEnergyLevel(energyLevel: Int) {
-        dataStoreManager.setEnergyLevel(energyLevel)
+    companion object {
+        const val RECHARGE_TIME = 600000L
     }
 
 }

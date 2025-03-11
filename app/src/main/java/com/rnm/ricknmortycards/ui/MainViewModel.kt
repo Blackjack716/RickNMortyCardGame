@@ -76,8 +76,7 @@ class MainViewModel @Inject constructor(
             PortalEvent.OnPortalClicked -> {
                 viewModelScope.launch {
                     homeState.emit(homeState.value.copy(cardState = getRandomCardUseCase.execute()))
-                    val energyLevel = getEnergyLevelUseCase.execute().first()
-                    setEnergyLevelUseCase.execute(energyLevel - 1)
+                    setEnergyLevelUseCase.execute(-1)
                 }
             }
             PortalEvent.OnPortalDismissed -> {
