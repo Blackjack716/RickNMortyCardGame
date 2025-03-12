@@ -1,10 +1,7 @@
 package com.rnm.ricknmortycards.ui
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.navOptions
 import com.rnm.domain.feature.GetAllCardsUseCase
 import com.rnm.domain.feature.GetEnergyRechargeTimeUseCase
 import com.rnm.domain.feature.GetEnergyUseCase
@@ -13,14 +10,11 @@ import com.rnm.domain.feature.GetRandomCardUseCase
 import com.rnm.domain.feature.SetEnergyUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
 import com.rnm.domain.model.Card
-import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.PortalEvent
-import com.rnm.ricknmortycards.ui.compose.RNMScreen
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

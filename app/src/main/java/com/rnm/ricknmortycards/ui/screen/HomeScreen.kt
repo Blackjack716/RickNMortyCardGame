@@ -29,6 +29,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +45,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,9 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat.getDrawable
 import coil3.compose.AsyncImage
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
@@ -64,8 +62,7 @@ import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
-import java.text.DateFormat.getDateInstance
-import java.text.DateFormat.getTimeInstance
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -115,6 +112,24 @@ fun HomeScreen(
                 imageVector = ImageVector.vectorResource(R.drawable.home_background),
                 contentDescription = null
             )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                AsyncImage(
+                    model = R.drawable.portal_home,
+                    contentDescription = null,
+                    modifier = modifier
+                        .padding(bottom = 120.dp, start = 20.dp, end = 20.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            openPortal = true
+                            onPortalEvent(PortalEvent.OnPortalClicked)
+                        }
+                )
+            }
             Image(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -142,38 +157,40 @@ fun HomeScreen(
                 text = "${state?.energyLevelState ?: 0} USES LEFT",
                 color = Color.Red
             )
+
+            var isRunning by remember { mutableStateOf(true) }
+
+            var rechargingTime by remember {
+                mutableStateOf("RECHARGING... " + convertLongToTimeLeft(state?.energyRechargeTimeState))
+            }
+
+            LaunchedEffect(key1 = isRunning) {
+                while (isRunning) {
+                    delay(1000)
+                    rechargingTime = "RECHARGING... " + convertLongToTimeLeft(state?.energyRechargeTimeState)
+                }
+                rechargingTime = "ENERGY FULL"
+            }
+
+            LaunchedEffect(key1 = state?.energyLevelState) {
+                if ((state?.energyLevelState ?: 10) >= 10) {
+                    isRunning = false
+                } else {
+                    isRunning = true
+                }
+            }
+
             Text(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 85.dp, end = 44.dp, start = 44.dp)
                     .fillMaxWidth()
                     .graphicsLayer(rotationX = 20f),
-                text = "RECHARGING... ${convertLongToTimeLeft(state?.energyRechargeTimeState)}",
+                text = rechargingTime,
                 color = Color.Red,
                 textAlign = TextAlign.End
             )
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = rememberDrawablePainter(
-                        drawable = getDrawable(
-                            LocalContext.current,
-                            R.drawable.portal_home
-                        )
-                    ),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(bottom = 120.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            openPortal = true
-                            onPortalEvent(PortalEvent.OnPortalClicked)
-                        }
-                )
-            }
+
             NavigationBottomBar(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onEvent = onNavBardEvent
@@ -442,7 +459,7 @@ private fun convertLongToTimeLeft(time: Long?): String {
 
     val currentTime = System.currentTimeMillis()
     val date = Date(time - currentTime)
-    val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val format = SimpleDateFormat("mm:ss", Locale.getDefault())
     return format.format(date)
 }
 

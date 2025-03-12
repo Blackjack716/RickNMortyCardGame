@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.rnm.ricknmortycards"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rnm.ricknmortycards"
@@ -79,6 +79,7 @@ dependencies {
     //coil compose
     implementation(libs.coil3.compose)
     implementation(libs.coil3.network)
+    implementation(libs.coil.gif)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)

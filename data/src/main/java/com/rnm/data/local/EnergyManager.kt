@@ -26,8 +26,8 @@ class EnergyManager @Inject constructor(
     private fun manageTimer() {
         CoroutineScope(Dispatchers.IO).launch {
             dataStoreManager.getEnergyRechargeTime().collectLatest {
-                checkEnergy(it)
                 _endTime.value = it
+                checkEnergy(it)
             }
         }
     }
@@ -42,7 +42,7 @@ class EnergyManager @Inject constructor(
 
             energyLevel.value = 10 - (differenceInUses + 1)
             timer?.cancel()
-            println("timer: check Energy $endTime ${energyLevel.value} $difference")
+            println("timer: check Energy $additionalTime ${energyLevel.value} $difference")
             setSimpleTimer(
                 endTime = if (additionalTime > 1)
                     additionalTime + System.currentTimeMillis()
@@ -60,9 +60,11 @@ class EnergyManager @Inject constructor(
         val endTime = dataStoreManager.getEnergyRechargeTime().first()
         println("timer: endTIme = $endTime")
         if (endTime > System.currentTimeMillis()) {
-            dataStoreManager.setEnergyRechargeTime(endTime + (RECHARGE_TIME * energy))
+            dataStoreManager.setEnergyRechargeTime(endTime + (RECHARGE_TIME * energy * -1))
+            println("timer: newEndTIme1 = ${RECHARGE_TIME * energy * -1}")
         } else {
             dataStoreManager.setEnergyRechargeTime(System.currentTimeMillis() + (RECHARGE_TIME * energy * -1))
+            println("timer: newEndTIme2 = ${RECHARGE_TIME * energy * -1}")
         }
 
     }
