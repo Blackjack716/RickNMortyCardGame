@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -37,11 +38,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
+import com.rnm.ricknmortycards.ui.compose.AnimatedCardBackground
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.utils.MockCardsData
 import com.rnm.ricknmortycards.ui.compose.NavBarEvent
@@ -102,19 +108,23 @@ fun AllCardsScreen(
                 item {
                     Box(
                         modifier = Modifier
-                            .height(180.dp)
-                            .background(color = Color.Cyan)
+                            .height(itemWidthDp * 1.45f)
+                            .background(color = Color.Transparent)
                     ) {
                         var isLoading by remember {
                             mutableStateOf(true)
                         }
 
+                        AnimatedCardBackground(
+                            rarity = it.rarity
+                        )
 
                         AsyncImage(
                             model = it.photoUrl,
                             contentDescription = it.name,
                             modifier = Modifier
-                                .padding(horizontal = 4.dp)
+                                .padding(horizontal = 10.dp)
+                                .padding(top = 10.dp)
                                 .fillMaxSize()
                                 .then(
                                     if (isLoading) {
@@ -139,11 +149,18 @@ fun AllCardsScreen(
                             alignment = Alignment.TopStart
                         )
 
+                        val imageResource = when (it.rarity) {
+                            Card.RARITY_1 -> ImageVector.vectorResource(R.drawable.card_frame_blue)
+                            Card.RARITY_2 -> ImageVector.vectorResource(R.drawable.card_frame_purple)
+                            Card.RARITY_3 -> ImageVector.vectorResource(R.drawable.card_frame_red)
+                            else -> ImageVector.vectorResource(R.drawable.card_frame_black)
+                        }
+
                         Image(
                             modifier = Modifier
                                 .padding(vertical = 0.dp)
                                 .fillMaxSize(),
-                            imageVector = ImageVector.vectorResource(R.drawable.photo_frame_black),
+                            imageVector = imageResource,
                             contentDescription = null,
                             contentScale = ContentScale.FillBounds
                         )
@@ -151,12 +168,19 @@ fun AllCardsScreen(
                         Box(
                             modifier = Modifier
                                 .align(Alignment.TopStart)
-                                .padding(top = 2.dp, start = 4.dp)
-                                .size(30.dp)
-                                .alpha(0.5f)
-                                .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                                .padding(top = 9.dp, start = 10.dp)
+                                .size(width = 22.dp, height = 12.dp)
                         ) {
-                            Text("1")
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                text = it.id.toString(),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 8.sp,
+                                lineHeight = 6.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.Black
+                            )
                         }
 
                         Box(
@@ -190,16 +214,37 @@ fun AllCardsScreen(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
                                 .fillMaxWidth()
-                                .alpha(0.4f)
-                                .background(brush = bottomTextGradient, shape = RoundedCornerShape(4.dp))
-                                .padding(top = 8.dp)
+                                .height(100.dp)
+                                .padding(bottom = 10.dp, top = 30.dp, start = 10.dp, end = 10.dp)
                         ) {
+                            var cardNameFontSize by remember {
+                                mutableStateOf(18.sp)
+                            }
+                            var readyToDraw by remember {
+                                mutableStateOf(false)
+                            }
+
                             Text(
-                                text = "${it.name}",
+                                text = it.name ?: ("test test test test test test" +
+                                        "test test test test test test" +
+                                        "test test test test test test"),
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .padding(horizontal = 4.dp, vertical = 2.dp)
-                                ,
-                                color = Color.White
+                                    .padding(horizontal = 16.dp, vertical = 2.dp)
+                                    .align(Alignment.Center)
+                                    .drawWithContent {
+                                        if (readyToDraw) drawContent()
+                                    },
+                                overflow = TextOverflow.Ellipsis,
+                                color = Color(0xFF000000),
+                                onTextLayout = { textLayoutResult ->
+                                    if (textLayoutResult.hasVisualOverflow) {
+                                        cardNameFontSize *= 0.9f
+                                    } else {
+                                        readyToDraw = true
+                                    }
+                                },
+                                fontSize = cardNameFontSize
                             )
                         }
                     }

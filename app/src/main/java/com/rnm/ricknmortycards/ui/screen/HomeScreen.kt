@@ -56,6 +56,7 @@ import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImage
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
+import com.rnm.ricknmortycards.ui.compose.AnimatedCardBackground
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.ui.compose.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
@@ -105,13 +106,7 @@ fun HomeScreen(
                 .fillMaxSize()
         ) {
             CurrencyCounterBar()
-            Image(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 100.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.home_background),
-                contentDescription = null
-            )
+
             Column(
                 modifier = Modifier.align(Alignment.Center),
                 verticalArrangement = Arrangement.Center,
@@ -122,14 +117,23 @@ fun HomeScreen(
                     model = R.drawable.portal_home,
                     contentDescription = null,
                     modifier = modifier
-                        .padding(bottom = 120.dp, start = 20.dp, end = 20.dp)
-                        .fillMaxWidth()
+                        .padding(bottom = 120.dp)
+                        .fillMaxWidth(0.7f)
                         .clickable {
                             openPortal = true
                             onPortalEvent(PortalEvent.OnPortalClicked)
                         }
                 )
             }
+
+            Image(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 100.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.home_background),
+                contentDescription = null
+            )
+
             Image(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -280,17 +284,9 @@ private fun CardDialog(
                     mutableStateOf(true)
                 }
 
-                val backgroundColors: Pair<Color, Color> = when(state?.cardState?.rarity) {
-                    Card.RARITY_1 -> Color(0xFF00A6FF) to Color(0x6600A6FF)
-                    Card.RARITY_2 -> Color(0xFF7A00FF) to Color(0x667A00FF)
-                    Card.RARITY_3 -> Color(0xFFFF0A00) to Color(0x66FF0A00)
-                    else -> Color(0xFF000000) to Color(0x66000000)
-                }
                 AnimatedCardBackground(
-                    initialColor = backgroundColors.first,
-                    targetColor = backgroundColors.second
+                    rarity = state?.cardState?.rarity
                 )
-
 
                 AsyncImage(
                     model = state?.cardState?.photoUrl,
@@ -351,7 +347,7 @@ private fun CardDialog(
                 }
 
                 var cardNameFontSize by remember {
-                    mutableStateOf(24.sp)
+                    mutableStateOf(22.sp)
                 }
                 var readyToDraw by remember {
                     mutableStateOf(false)
@@ -425,32 +421,6 @@ private fun CardDialog(
             }
         }
 
-    }
-}
-
-@Composable
-fun BoxScope.AnimatedCardBackground(initialColor: Color, targetColor: Color) {
-    val animatedColor by rememberInfiniteTransition().animateColor(
-        initialValue = initialColor,
-        targetValue = targetColor,
-        animationSpec = infiniteRepeatable(
-            animation = tween(6000),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "colorAnimation"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .align(Alignment.Center)
-            .blur(radius = 30.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = animatedColor, shape = RoundedCornerShape(5.dp))
-        ) {}
     }
 }
 
