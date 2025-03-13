@@ -3,6 +3,7 @@ package com.rnm.ricknmortycards.ui.screen
 import android.graphics.drawable.GradientDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -74,12 +75,6 @@ fun AllCardsScreen(
         0.0f to Color.Black,
         0.5f to Color.Black,
         1f to Color.Transparent
-    )
-
-    val bottomTextGradient = Brush.verticalGradient(
-        colorStops = bottomTextColorStops,
-        startY = Float.POSITIVE_INFINITY,
-        endY = 0.0f
     )
 
     val itemsSpacing = 8.dp
@@ -186,9 +181,12 @@ fun AllCardsScreen(
                         Box(
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .size(30.dp)
-                                .alpha(0.5f)
-                                .background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                                .padding(top = 9.dp, end = 10.dp)
+                                .size(24.dp)
+                                //.background(color = Color.LightGray, shape = RoundedCornerShape(4.dp))
+                                .clickable {
+
+                                }
                         ) {
                             if (it.isFavourite == true) {
                                 Image(
