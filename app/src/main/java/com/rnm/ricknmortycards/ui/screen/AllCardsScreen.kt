@@ -1,6 +1,7 @@
 package com.rnm.ricknmortycards.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +36,8 @@ fun AllCardsScreenPreview() {
     AllCardsScreen(
         onNavBardEvent = {},
         allCardsState = MockCardsData.allCardsData,
-        onCardEvent = {}
+        onCardEvent = {},
+        currencyState = null
     )
 }
 
@@ -44,7 +46,8 @@ fun AllCardsScreen(
     modifier: Modifier = Modifier,
     onNavBardEvent: (NavBarEvent) -> Unit,
     allCardsState: List<Card> = emptyList(),
-    onCardEvent: (CardEvent) -> Unit
+    onCardEvent: (CardEvent) -> Unit,
+    currencyState: Long?
 ) {
 
     val itemsSpacing = 8.dp
@@ -60,7 +63,7 @@ fun AllCardsScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        CurrencyCounterBar()
+        CurrencyCounterBar(currencyState)
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(top = 42.dp),
@@ -75,6 +78,9 @@ fun AllCardsScreen(
                         modifier = Modifier
                             .height(itemWidthDp * 1.45f)
                             .background(color = Color.Transparent)
+                            .clickable {
+                                CardEvent.OnCardClicked(it)
+                            }
                     ) {
 
                         if (it.rarity != null) {

@@ -23,7 +23,8 @@ fun RNMNavigation(
     favCardsState: List<Card> = emptyList(),
     homeState: HomeState? = null,
     onPortalEvent: (PortalEvent) -> Unit,
-    onCardEvent: (CardEvent) -> Unit
+    onCardEvent: (CardEvent) -> Unit,
+    currencyState: Long? = null
 ) {
     val navController = rememberNavController()
 
@@ -38,7 +39,8 @@ fun RNMNavigation(
                     onNavEvent(event, navController)
                 },
                 onPortalEvent = onPortalEvent,
-                state = homeState
+                state = homeState,
+                currencyState = currencyState
             )
         }
         composable(route = RNMScreen.AllCards.name) {
@@ -48,7 +50,8 @@ fun RNMNavigation(
                     onNavEvent(event, navController)
                 },
                 allCardsState = allCardsState,
-                onCardEvent = onCardEvent
+                onCardEvent = onCardEvent,
+                currencyState = currencyState
             )
         }
         composable(route = RNMScreen.FavCards.name) {
@@ -57,7 +60,8 @@ fun RNMNavigation(
                 onNavBardEvent = { event ->
                     onNavEvent(event, navController)
                 },
-                favCardsState = favCardsState
+                favCardsState = favCardsState,
+                currencyState = currencyState
             )
         }
     }

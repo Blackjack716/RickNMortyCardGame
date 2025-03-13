@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.rnm.ricknmortycards.R
 
 @Composable
-fun BoxScope.CurrencyCounterBar() {
+fun BoxScope.CurrencyCounterBar(
+    currencyState: Long?
+) {
     Row(
         modifier = Modifier
             .align(Alignment.TopEnd)
@@ -34,7 +36,7 @@ fun BoxScope.CurrencyCounterBar() {
             contentDescription = null
         )
         Text(
-            text = "100000",
+            text = currencyState?.toString() ?: "0",
             modifier = Modifier
                 .padding(end = 4.dp)
                 .align(Alignment.CenterVertically)

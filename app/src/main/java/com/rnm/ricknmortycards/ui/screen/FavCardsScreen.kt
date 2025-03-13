@@ -39,6 +39,7 @@ fun FavCardsScreen(
     modifier: Modifier = Modifier,
     onNavBardEvent: (NavBarEvent) -> Unit,
     favCardsState: List<Card> = emptyList(),
+    currencyState: Long?
 ) {
     val itemsSpacing = 8.dp
     val columnCount = 3
@@ -53,7 +54,7 @@ fun FavCardsScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        CurrencyCounterBar()
+        CurrencyCounterBar(currencyState)
         LazyVerticalGrid(
             modifier = Modifier
                 .padding(top = 42.dp),

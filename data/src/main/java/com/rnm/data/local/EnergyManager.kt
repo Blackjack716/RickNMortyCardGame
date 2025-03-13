@@ -56,15 +56,14 @@ class EnergyManager @Inject constructor(
         }
     }
 
-    suspend fun setEnergyLevel(energy: Int) {
-        val endTime = dataStoreManager.getEnergyRechargeTime().first()
-        println("timer: endTIme = $endTime")
-        if (endTime > System.currentTimeMillis()) {
-            dataStoreManager.setEnergyRechargeTime(endTime + (RECHARGE_TIME * energy * -1))
-            println("timer: newEndTIme1 = ${RECHARGE_TIME * energy * -1}")
-        } else {
-            dataStoreManager.setEnergyRechargeTime(System.currentTimeMillis() + (RECHARGE_TIME * energy * -1))
-            println("timer: newEndTIme2 = ${RECHARGE_TIME * energy * -1}")
+    fun setEnergyLevel(energy: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val endTime = dataStoreManager.getEnergyRechargeTime().first()
+            if (endTime > System.currentTimeMillis()) {
+                dataStoreManager.setEnergyRechargeTime(endTime + (RECHARGE_TIME * energy * -1))
+            } else {
+                dataStoreManager.setEnergyRechargeTime(System.currentTimeMillis() + (RECHARGE_TIME * energy * -1))
+            }
         }
 
     }

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">RickNMortyCards</string>
-    <string name="energy_level_button">%1$d/%2$d</string>
-    <string name="energy_recharging_info">Recharging...</string>
+    <string name="energy_level_info">"%d USES LEFT"</string>
+    <string name="recharging_text_full">ENERGY FULL</string>
+    <string name="recharging_text">RECHARGING… %s</string>
+    <string name="button_main_ok">OK</string>">
+    <string name="button_main_sell">SELL</string>">
+
 </resources>

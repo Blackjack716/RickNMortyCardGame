@@ -85,18 +85,20 @@ class CardRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sellCard(cardId: Int) {
-        val card = cardDao.getCard(cardId)
-        card.collect {
-            cardDao.updateCard(
-                it.copy(
-                    isOwned = false,
-                    rarity = null,
-                    upgradeCost = Card.UPGRADE_COST_1,
-                    sellValue = 0f
+    override fun sellCard(cardId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val card = cardDao.getCard(cardId)
+            card.collect {
+                cardDao.updateCard(
+                    it.copy(
+                        isOwned = false,
+                        rarity = null,
+                        upgradeCost = Card.UPGRADE_COST_1,
+                        sellValue = 0f
+                    )
                 )
-            )
 
+            }
         }
     }
 
@@ -112,7 +114,7 @@ class CardRepositoryImpl @Inject constructor(
         return energyManager.getEnergyLevel()
     }
 
-    override suspend fun setEnergyLevel(energyLevel: Int) {
+    override fun setEnergyLevel(energyLevel: Int) {
         energyManager.setEnergyLevel(energyLevel)
     }
 

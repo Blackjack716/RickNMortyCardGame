@@ -3,11 +3,14 @@ package com.rnm.ricknmortycards.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rnm.domain.feature.GetAllCardsUseCase
+import com.rnm.domain.feature.GetCurrencyUseCase
 import com.rnm.domain.feature.GetEnergyRechargeTimeUseCase
 import com.rnm.domain.feature.GetEnergyUseCase
 import com.rnm.domain.feature.GetFavouriteCardsUseCase
 import com.rnm.domain.feature.GetRandomCardUseCase
+import com.rnm.domain.feature.SellCardUseCase
 import com.rnm.domain.feature.SetCardAsFavUseCase
+import com.rnm.domain.feature.SetCurrencyUseCase
 import com.rnm.domain.feature.SetEnergyUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
 import com.rnm.domain.model.Card
@@ -29,10 +32,12 @@ class MainViewModel @Inject constructor(
     private val getEnergyLevelUseCase: GetEnergyUseCase,
     private val setEnergyLevelUseCase: SetEnergyUseCase,
     private val getEnergyRechargeTimeUseCase: GetEnergyRechargeTimeUseCase,
-    private val setCardAsFavUseCase: SetCardAsFavUseCase
+    private val setCardAsFavUseCase: SetCardAsFavUseCase,
+    private val sellCardUseCase: SellCardUseCase,
+    private val setCurrencyUseCase: SetCurrencyUseCase,
+    private val getCurrencyUseCase: GetCurrencyUseCase
 ): ViewModel() {
 
-    val homeCardState = MutableStateFlow<Card?>(null)
     val homeState = MutableStateFlow(
         HomeState(
             cardState = null,
@@ -42,6 +47,7 @@ class MainViewModel @Inject constructor(
     )
     val allCardsState = MutableStateFlow<List<Card>>(emptyList())
     val favCardsState = MutableStateFlow<List<Card>>(emptyList())
+    val currencyState = MutableStateFlow(100L)
 
     init {
         viewModelScope.launch {
@@ -49,6 +55,7 @@ class MainViewModel @Inject constructor(
         }
         collectEnergyLevel()
         collectEnergyRechargeTime()
+        collectCurrencyValue()
     }
 
     fun collectAllCards() {
@@ -72,14 +79,17 @@ class MainViewModel @Inject constructor(
         when (event) {
             PortalEvent.OnPortalClicked -> {
                 viewModelScope.launch {
-                    homeState.emit(homeState.value.copy(cardState = getRandomCardUseCase.execute()))
-                    setEnergyLevelUseCase.execute(-1)
+                    if (allCardsState.value.isNotEmpty()) {
+                        homeState.emit(homeState.value.copy(cardState = getRandomCardUseCase.execute()))
+                        setEnergyLevelUseCase.execute(-1)
+                    }
                 }
             }
-            PortalEvent.OnPortalDismissed -> {
-
+            PortalEvent.OnPortalDismissed -> {}
+            is PortalEvent.OnPortalSellButtonClicked -> {
+                sellCardUseCase.execute(event.cardId)
+                setCurrencyUseCase.execute(event.price)
             }
-            is PortalEvent.OnPortalSellButtonClicked -> TODO()
         }
     }
 
@@ -88,7 +98,10 @@ class MainViewModel @Inject constructor(
             is CardEvent.OnFavClicked -> {
                 setCardAsFavUseCase.execute(event.cardId)
             }
-            is CardEvent.OnSellClicked -> TODO()
+            is CardEvent.OnSellClicked -> {
+                sellCardUseCase.execute(event.cardId)
+                setCurrencyUseCase.execute(event.price.toFloat())
+            }
         }
     }
 
@@ -104,6 +117,14 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             getEnergyRechargeTimeUseCase.execute().collectLatest {
                 homeState.emit(homeState.value.copy(energyRechargeTimeState = it))
+            }
+        }
+    }
+
+    private fun collectCurrencyValue() {
+        viewModelScope.launch {
+            getCurrencyUseCase.execute().collectLatest {
+                currencyState.emit(it.toLong())
             }
         }
     }

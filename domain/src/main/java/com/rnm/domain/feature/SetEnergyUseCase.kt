@@ -6,7 +6,7 @@ import javax.inject.Inject
 class SetEnergyUseCase @Inject constructor(
     private val cardRepository: CardRepository
 ) {
-    suspend fun execute(energyLevel: Int) {
+    fun execute(energyLevel: Int) {
         cardRepository.setEnergyLevel(energyLevel)
     }
 }
