@@ -1,4 +1,4 @@
-package com.rnm.ricknmortycards.ui.compose
+package com.rnm.ricknmortycards.ui.compose.events
 
 
 sealed class NavBarEvent {

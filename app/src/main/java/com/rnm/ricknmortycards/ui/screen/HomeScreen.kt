@@ -1,6 +1,5 @@
 package com.rnm.ricknmortycards.ui.screen
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -13,7 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
@@ -36,9 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -56,11 +52,11 @@ import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImage
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
-import com.rnm.ricknmortycards.ui.compose.AnimatedCardBackground
+import com.rnm.ricknmortycards.ui.compose.AnimatedBackgroundAura
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
-import com.rnm.ricknmortycards.ui.compose.NavBarEvent
+import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
-import com.rnm.ricknmortycards.ui.compose.PortalEvent
+import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import kotlinx.coroutines.delay
@@ -162,25 +158,18 @@ fun HomeScreen(
                 color = Color.Red
             )
 
-            var isRunning by remember { mutableStateOf(true) }
-
             var rechargingTime by remember {
                 mutableStateOf("RECHARGING... " + convertLongToTimeLeft(state?.energyRechargeTimeState))
             }
 
-            LaunchedEffect(key1 = isRunning) {
-                while (isRunning) {
-                    delay(1000)
-                    rechargingTime = "RECHARGING... " + convertLongToTimeLeft(state?.energyRechargeTimeState)
-                }
-                rechargingTime = "ENERGY FULL"
-            }
-
             LaunchedEffect(key1 = state?.energyLevelState) {
                 if ((state?.energyLevelState ?: 10) >= 10) {
-                    isRunning = false
+                    rechargingTime = "ENERGY FULL"
                 } else {
-                    isRunning = true
+                    while (true) {
+                        delay(1000)
+                        rechargingTime = "RECHARGING... " + convertLongToTimeLeft(state?.energyRechargeTimeState)
+                    }
                 }
             }
 
@@ -284,8 +273,9 @@ private fun CardDialog(
                     mutableStateOf(true)
                 }
 
-                AnimatedCardBackground(
-                    rarity = state?.cardState?.rarity
+                AnimatedBackgroundAura(
+                    rarity = state?.cardState?.rarity,
+                    animationTime = 2000
                 )
 
                 AsyncImage(
@@ -318,12 +308,19 @@ private fun CardDialog(
                     alignment = Alignment.TopStart
                 )
 
+                val imageResource = when (state?.cardState?.rarity) {
+                    Card.RARITY_1 -> ImageVector.vectorResource(R.drawable.card_frame_blue)
+                    Card.RARITY_2 -> ImageVector.vectorResource(R.drawable.card_frame_purple)
+                    Card.RARITY_3 -> ImageVector.vectorResource(R.drawable.card_frame_red)
+                    else -> ImageVector.vectorResource(R.drawable.card_frame_black)
+                }
+
                 Image(
                     modifier = Modifier
                         .padding(vertical = 0.dp)
                         .fillMaxSize()
                         .align(Alignment.Center),
-                    imageVector = ImageVector.vectorResource(R.drawable.card_frame_black),
+                    imageVector = imageResource,
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds
                 )
@@ -411,7 +408,13 @@ private fun CardDialog(
                             state?.cardState?.sellValue ?: 0f
                         )
                     )
-                }
+                },
+                colors = ButtonColors(
+                    containerColor = Color(0xFFC96060),
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Gray,
+                    disabledContainerColor = Color.Gray
+                )
             ) {
                 Text(
                     modifier = Modifier

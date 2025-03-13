@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.utils.BottomTriangleShape
@@ -36,14 +35,14 @@ fun Preview() {
             modifier = Modifier
                 .size(width = 200.dp, height = 280.dp)
         ) {
-            AnimatedCardBackground(rarity = 1)
+            AnimatedBackgroundAura(rarity = 1)
         }
 
     }
 }
 
 @Composable
-fun BoxScope.AnimatedCardBackground(rarity: Int?, colorStartingRange: Float = 0.05f, backgroundColor: Color = Color.White) {
+fun BoxScope.AnimatedBackgroundAura(rarity: Int?, colorStartingRange: Float = 0.05f, animationTime: Int = 6000) {
 
     val backgroundColors: Pair<Color, Color> = when(rarity) {
         Card.RARITY_1 -> Color(0xAA00A6FF) to Color(0x4400A6FF)
@@ -59,7 +58,7 @@ fun BoxScope.AnimatedCardBackground(rarity: Int?, colorStartingRange: Float = 0.
         initialValue = initialColor,
         targetValue = targetColor,
         animationSpec = infiniteRepeatable(
-            animation = tween(6000),
+            animation = tween(animationTime),
             repeatMode = RepeatMode.Reverse
         ),
         label = "colorAnimation"

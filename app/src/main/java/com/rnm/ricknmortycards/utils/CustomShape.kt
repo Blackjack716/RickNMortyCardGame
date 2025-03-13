@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 
 abstract class CustomShape : Shape {
     companion object {
-        const val DEFAULT_CORNER_RADIUS = 20f
+        const val DEFAULT_CORNER_RADIUS = 15f
     }
 }
 

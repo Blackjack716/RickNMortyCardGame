@@ -8,6 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.rnm.domain.model.Card
+import com.rnm.ricknmortycards.ui.compose.events.CardEvent
+import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
+import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import com.rnm.ricknmortycards.ui.screen.AllCardsScreen
 import com.rnm.ricknmortycards.ui.screen.FavCardsScreen
@@ -19,7 +22,8 @@ fun RNMNavigation(
     allCardsState: List<Card> = emptyList(),
     favCardsState: List<Card> = emptyList(),
     homeState: HomeState? = null,
-    onPortalEvent: (PortalEvent) -> Unit
+    onPortalEvent: (PortalEvent) -> Unit,
+    onCardEvent: (CardEvent) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -43,7 +47,8 @@ fun RNMNavigation(
                 onNavBardEvent = { event ->
                     onNavEvent(event, navController)
                 },
-                allCardsState = allCardsState
+                allCardsState = allCardsState,
+                onCardEvent = onCardEvent
             )
         }
         composable(route = RNMScreen.FavCards.name) {

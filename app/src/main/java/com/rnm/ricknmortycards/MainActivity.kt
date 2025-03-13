@@ -52,8 +52,10 @@ class MainActivity : ComponentActivity() {
 
             }
             LaunchedEffect(mainViewModel.favCardsState) {
-                mainViewModel.allCardsState.collect {
-                    favCardsState = it
+                mainViewModel.favCardsState.collect {
+                    favCardsState = it.filter { card ->
+                        card.isOwned == true
+                    }
                 }
 
             }
@@ -71,7 +73,8 @@ class MainActivity : ComponentActivity() {
                         allCardsState = allCardsState,
                         favCardsState = favCardsState,
                         homeState = homeState,
-                        onPortalEvent = mainViewModel::onPortalEvent
+                        onPortalEvent = mainViewModel::onPortalEvent,
+                        onCardEvent = mainViewModel::onCardEvent
                     )
                 }
             }

@@ -7,10 +7,12 @@ import com.rnm.domain.feature.GetEnergyRechargeTimeUseCase
 import com.rnm.domain.feature.GetEnergyUseCase
 import com.rnm.domain.feature.GetFavouriteCardsUseCase
 import com.rnm.domain.feature.GetRandomCardUseCase
+import com.rnm.domain.feature.SetCardAsFavUseCase
 import com.rnm.domain.feature.SetEnergyUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
 import com.rnm.domain.model.Card
-import com.rnm.ricknmortycards.ui.compose.PortalEvent
+import com.rnm.ricknmortycards.ui.compose.events.CardEvent
+import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +29,7 @@ class MainViewModel @Inject constructor(
     private val getEnergyLevelUseCase: GetEnergyUseCase,
     private val setEnergyLevelUseCase: SetEnergyUseCase,
     private val getEnergyRechargeTimeUseCase: GetEnergyRechargeTimeUseCase,
+    private val setCardAsFavUseCase: SetCardAsFavUseCase
 ): ViewModel() {
 
     val homeCardState = MutableStateFlow<Card?>(null)
@@ -77,6 +80,15 @@ class MainViewModel @Inject constructor(
 
             }
             is PortalEvent.OnPortalSellButtonClicked -> TODO()
+        }
+    }
+
+    fun onCardEvent(event: CardEvent) {
+        when (event) {
+            is CardEvent.OnFavClicked -> {
+                setCardAsFavUseCase.execute(event.cardId)
+            }
+            is CardEvent.OnSellClicked -> TODO()
         }
     }
 

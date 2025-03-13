@@ -39,6 +39,14 @@ class CardRepositoryImpl @Inject constructor(
         return cardDao.getFavouriteCards().map { it.toCard() }
     }
 
+    override fun setCardAsFav(cardId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val card = cardDao.getCard(cardId).first()
+            val isFav = card.isFavourite ?: false
+            cardDao.updateCard(card.copy(isFavourite = !isFav))
+        }
+    }
+
     override suspend fun getCurrencyValue(): Flow<Float> {
         return dataStoreManager.getCurrencyValue()
     }

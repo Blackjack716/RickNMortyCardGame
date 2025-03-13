@@ -48,7 +48,7 @@ class CharactersRepositoryImpl @Inject constructor(
      * First call to api got no nextPage parameter,
      * if there is pages parameter then call for all pages, starting from 2nd page
      */
-    private suspend fun getCharacters(pagesAmount: Int) {
+    private fun getCharacters(pagesAmount: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             for (pageNumber in 2..pagesAmount) {
                 when (val response = rickAndMortyApi.getNextPageCharacters(pageNumber)) {
@@ -68,7 +68,7 @@ class CharactersRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun addCardsToDatabase() {
+    private fun addCardsToDatabase() {
         CoroutineScope(Dispatchers.IO).launch {
             _characters.collectLatest {
                 if (errorType == null) {

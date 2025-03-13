@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface CardRepository {
     suspend fun getAllCards(): Flow<List<Card>>
     suspend fun getFavCards(): Flow<List<Card>>
+    fun setCardAsFav(cardId: Int)
     suspend fun getCurrencyValue(): Flow<Float>
     fun addCurrency(addedValue: Float)
     suspend fun isDatabaseUpdated(): Boolean
