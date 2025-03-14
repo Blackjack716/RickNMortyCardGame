@@ -6,11 +6,14 @@ import com.rnm.data.local.model.getCardSellCost
 import com.rnm.data.local.model.getCardUpgradeCost
 import com.rnm.data.local.model.toCard
 import com.rnm.domain.model.Card
+import com.rnm.domain.model.SortType
+import com.rnm.domain.model.toSortType
 import com.rnm.domain.repository.CardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -36,7 +39,9 @@ class CardRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFavCards(): Flow<List<Card>> {
-        return cardDao.getFavouriteCards().map { it.toCard() }
+        return cardDao.getFavouriteCards()
+            .map { it.toCard() }
+            .map { it.filter { card -> card.isOwned == true } }
     }
 
     override fun setCardAsFav(cardId: Int) {
@@ -61,7 +66,7 @@ class CardRepositoryImpl @Inject constructor(
         return dataStoreManager.getIsDatabaseUpdated()
     }
 
-    override suspend fun upgradeCard(cardId: Int, rarity: Int?) {
+    override fun upgradeCard(cardId: Int, rarity: Int?) {
         CoroutineScope(Dispatchers.IO).launch {
             val card = cardDao.getCard(cardId).first()
             if (rarity != null) {
@@ -121,6 +126,16 @@ class CardRepositoryImpl @Inject constructor(
 
     override suspend fun getEnergyRechargeTime(): Flow<Long> {
         return dataStoreManager.getEnergyRechargeTime()
+    }
+
+    override fun setSortType(sortType: SortType) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStoreManager.setSortType(sortType)
+        }
+    }
+
+    override suspend fun getSortType(): Flow<SortType> {
+        return dataStoreManager.getSortType().map { it.toSortType() }
     }
 
 

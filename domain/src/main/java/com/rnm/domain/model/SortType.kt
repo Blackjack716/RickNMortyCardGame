@@ -1,7 +1,7 @@
 package com.rnm.domain.model
 
 enum class SortType {
-    Owned, Fav, Id, CharacterName
+    Owned, Fav, Id, CharacterName, Rarity
 }
 
 fun SortType.toInt(): Int {
@@ -14,6 +14,7 @@ fun Int.toSortType(): SortType {
         SortType.Id.ordinal -> SortType.Id
         SortType.Owned.ordinal -> SortType.Owned
         SortType.CharacterName.ordinal -> SortType.CharacterName
+        SortType.Rarity.ordinal -> SortType.Rarity
         else -> SortType.Id
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
@@ -18,15 +17,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.ui.compose.AnimatedBackgroundAura
 import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
-import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
-import com.rnm.ricknmortycards.ui.compose.sharedView.FavouriteIcon
+import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
+import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
 import com.rnm.ricknmortycards.ui.compose.sharedView.FrameOfCard
 import com.rnm.ricknmortycards.ui.compose.sharedView.ImageOfCharacter
 import com.rnm.ricknmortycards.ui.compose.sharedView.NameOfCharacter
+import com.rnm.ricknmortycards.ui.compose.uiState.FavCardsState
 
 @Composable
 @Preview
@@ -38,8 +37,9 @@ fun FavCardsScreenPreview() {
 fun FavCardsScreen(
     modifier: Modifier = Modifier,
     onNavBardEvent: (NavBarEvent) -> Unit,
-    favCardsState: List<Card> = emptyList(),
-    currencyState: Long?
+    favCardsState: FavCardsState,
+    currencyState: Long?,
+    onTopBarEvent: (TopBarEvent) -> Unit
 ) {
     val itemsSpacing = 8.dp
     val columnCount = 3
@@ -63,7 +63,7 @@ fun FavCardsScreen(
             verticalArrangement = Arrangement.spacedBy(itemsSpacing),
         ) {
 
-            favCardsState.forEach {
+            favCardsState.cards.forEach {
                 item {
                     val alphaForCard = if (it.rarity != null) {
                         1.0f

@@ -1,21 +1,31 @@
 package com.rnm.ricknmortycards.ui
 
+import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rnm.domain.feature.BuyOrUpgradeCardUseCase
 import com.rnm.domain.feature.GetAllCardsUseCase
 import com.rnm.domain.feature.GetCurrencyUseCase
 import com.rnm.domain.feature.GetEnergyRechargeTimeUseCase
 import com.rnm.domain.feature.GetEnergyUseCase
 import com.rnm.domain.feature.GetFavouriteCardsUseCase
 import com.rnm.domain.feature.GetRandomCardUseCase
+import com.rnm.domain.feature.GetSortTypeUseCase
 import com.rnm.domain.feature.SellCardUseCase
 import com.rnm.domain.feature.SetCardAsFavUseCase
 import com.rnm.domain.feature.SetCurrencyUseCase
 import com.rnm.domain.feature.SetEnergyUseCase
+import com.rnm.domain.feature.SetSortTypeUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
 import com.rnm.domain.model.Card
+import com.rnm.domain.model.SortType
+import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.CardEvent
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
+import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
+import com.rnm.ricknmortycards.ui.compose.uiState.AllCardsState
+import com.rnm.ricknmortycards.ui.compose.uiState.FavCardsState
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +45,10 @@ class MainViewModel @Inject constructor(
     private val setCardAsFavUseCase: SetCardAsFavUseCase,
     private val sellCardUseCase: SellCardUseCase,
     private val setCurrencyUseCase: SetCurrencyUseCase,
-    private val getCurrencyUseCase: GetCurrencyUseCase
+    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val getSortTypeUseCase: GetSortTypeUseCase,
+    private val setSortTypeUseCase: SetSortTypeUseCase,
+    private val buyOrUpgradeCardUseCase: BuyOrUpgradeCardUseCase
 ): ViewModel() {
 
     val homeState = MutableStateFlow(
@@ -45,8 +58,8 @@ class MainViewModel @Inject constructor(
             energyRechargeTimeState = null
         )
     )
-    val allCardsState = MutableStateFlow<List<Card>>(emptyList())
-    val favCardsState = MutableStateFlow<List<Card>>(emptyList())
+    val allCardsState = MutableStateFlow(AllCardsState(emptyList(), SortType.Id))
+    val favCardsState = MutableStateFlow(FavCardsState(emptyList(), SortType.Id))
     val currencyState = MutableStateFlow(0L)
 
     init {
@@ -56,12 +69,13 @@ class MainViewModel @Inject constructor(
         collectEnergyLevel()
         collectEnergyRechargeTime()
         collectCurrencyValue()
+        collectSortType()
     }
 
     fun collectAllCards() {
         viewModelScope.launch {
             getAllCardsUseCase.execute().collectLatest {
-                allCardsState.emit(it)
+                allCardsState.emit(allCardsState.value.copy(cards = it))
             }
         }
 
@@ -70,7 +84,7 @@ class MainViewModel @Inject constructor(
     fun collectFavCards() {
         viewModelScope.launch {
             getFavouriteCardsUseCase.execute().collectLatest {
-                favCardsState.emit(it)
+                favCardsState.emit(favCardsState.value.copy(cards = it))
             }
         }
     }
@@ -79,7 +93,7 @@ class MainViewModel @Inject constructor(
         when (event) {
             PortalEvent.OnPortalClicked -> {
                 viewModelScope.launch {
-                    if (allCardsState.value.isNotEmpty()) {
+                    if (allCardsState.value.cards.isNotEmpty()) {
                         homeState.emit(homeState.value.copy(cardState = getRandomCardUseCase.execute()))
                         setEnergyLevelUseCase.execute(-1)
                     }
@@ -89,6 +103,10 @@ class MainViewModel @Inject constructor(
             is PortalEvent.OnPortalSellButtonClicked -> {
                 sellCardUseCase.execute(event.cardId)
                 setCurrencyUseCase.execute(event.price)
+            }
+            is PortalEvent.OnPortalUpgradeButtonClicked -> {
+                buyOrUpgradeCardUseCase.execute(event.cardId)
+                setCurrencyUseCase.execute(event.price * -1)
             }
         }
     }
@@ -101,6 +119,14 @@ class MainViewModel @Inject constructor(
             is CardEvent.OnSellClicked -> {
                 sellCardUseCase.execute(event.cardId)
                 setCurrencyUseCase.execute(event.price.toFloat())
+            }
+        }
+    }
+
+    fun onTopBarEvent(event: TopBarEvent) {
+        when (event) {
+            is TopBarEvent.OnSortClicked -> {
+                setSortTypeUseCase.execute(event.sortType)
             }
         }
     }
@@ -125,6 +151,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             getCurrencyUseCase.execute().collectLatest {
                 currencyState.emit(it.toLong())
+            }
+        }
+    }
+
+    private fun collectSortType() {
+        viewModelScope.launch {
+            getSortTypeUseCase.execute().collectLatest {
+                allCardsState.emit(allCardsState.value.copy(sortType = it))
+                favCardsState.emit(favCardsState.value.copy(sortType = it))
             }
         }
     }

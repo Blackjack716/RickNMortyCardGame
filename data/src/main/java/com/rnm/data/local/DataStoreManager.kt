@@ -68,6 +68,12 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
+    fun getSortType(): Flow<Int> {
+        return dataStore.data.map {
+            it[SORT_TYPE_KEY] ?: 0
+        }
+    }
+
     suspend fun setEnergyLevel(energyLevel: Int) {
         dataStore.edit {
             println("timer: edit energyLevel $energyLevel")

@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
         mainViewModel.collectFavCards()
 
 
-
         enableEdgeToEdge()
         setContent {
 
@@ -57,9 +56,7 @@ class MainActivity : ComponentActivity() {
             }
             LaunchedEffect(mainViewModel.favCardsState) {
                 mainViewModel.favCardsState.collect {
-                    favCardsState = it.filter { card ->
-                        card.isOwned == true
-                    }
+                    favCardsState = it
                 }
 
             }
@@ -84,7 +81,8 @@ class MainActivity : ComponentActivity() {
                         homeState = homeState,
                         onPortalEvent = mainViewModel::onPortalEvent,
                         onCardEvent = mainViewModel::onCardEvent,
-                        currencyState = currencyState
+                        currencyState = currencyState,
+                        onTopBarEvent = mainViewModel::onTopBarEvent
                     )
                 }
             }

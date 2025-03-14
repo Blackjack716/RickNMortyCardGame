@@ -54,12 +54,20 @@ import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
+import com.rnm.ricknmortycards.ui.compose.sharedView.CardFrame
+import com.rnm.ricknmortycards.ui.compose.sharedView.CharacterImage
+import com.rnm.ricknmortycards.ui.compose.sharedView.CloseIcon
+import com.rnm.ricknmortycards.ui.compose.sharedView.PortalButtons
+import com.rnm.ricknmortycards.ui.compose.sharedView.ScaleableCardName
 import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
+
+const val HOUR_IN_MILLIS = 3600000L
 
 @Preview(showBackground = true)
 @Composable
@@ -87,7 +95,7 @@ fun HomeScreen(
     if (openPortal) {
         CardDialog(
             onDismissRequest = { openPortal = false },
-            state = state,
+            card = state?.cardState,
             onPortalEvent = onPortalEvent,
         )
     }
@@ -103,8 +111,10 @@ fun HomeScreen(
             CurrencyCounterBar(currencyState)
             PortalAnimation(
                 onPortalClicked = {
-                    openPortal = true
-                    onPortalEvent(PortalEvent.OnPortalClicked)
+                    if ((state?.energyLevelState ?: 0) > 0) {
+                        openPortal = true
+                        onPortalEvent(PortalEvent.OnPortalClicked)
+                    }
                 }
             )
             BackgroundGraphic(state)
@@ -215,9 +225,9 @@ private fun BoxScope.BackgroundGraphic(state: HomeState?) {
 }
 
 @Composable
-private fun CardDialog(
+fun CardDialog(
     onDismissRequest: () -> Unit = {},
-    state: HomeState?,
+    card: Card?,
     onPortalEvent: (PortalEvent) -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -233,17 +243,17 @@ private fun CardDialog(
                     .background(color = Color.Transparent)
             ) {
                 AnimatedBackgroundAura(
-                    rarity = state?.cardState?.rarity,
+                    rarity = card?.rarity,
                     animationTime = 2000
                 )
-                CharacterImage(state)
-                CardFrame(state)
-                ScaleableCardName(state)
+                CharacterImage(card)
+                CardFrame(card)
+                ScaleableCardName(card)
             }
 
             PortalButtons(
                 onDismissRequest = onDismissRequest,
-                state = state,
+                card = card,
                 onPortalEvent = onPortalEvent
             )
         }
@@ -255,199 +265,13 @@ private fun convertLongToTimeLeft(time: Long?): String {
     if (time == null) return ""
 
     val currentTime = System.currentTimeMillis()
+    val remaining = time - currentTime
     val date = Date(time - currentTime)
-    val format = SimpleDateFormat("mm:ss", Locale.getDefault())
+    val format = if (remaining >= HOUR_IN_MILLIS)
+        SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    else
+        SimpleDateFormat("mm:ss", Locale.getDefault())
+    format.timeZone = TimeZone.getTimeZone("UTC")
     return format.format(date)
-}
-
-@Composable
-private fun ColumnScope.CloseIcon(
-    onDismissRequest: () -> Unit
-) {
-    Image(
-        modifier = Modifier
-            .padding(4.dp)
-            .align(Alignment.End)
-            .size(30.dp)
-            .border(width = 2.dp, shape = CircleShape, color = Color.LightGray)
-            .alpha(0.6f)
-            .clickable {
-                onDismissRequest()
-            },
-        imageVector = ImageVector.vectorResource(R.drawable.ic_close),
-        contentDescription = null,
-    )
-}
-
-@Composable
-fun ColumnScope.PortalButtons(
-    onDismissRequest: () -> Unit = {},
-    state: HomeState?,
-    onPortalEvent: (PortalEvent) -> Unit
-) {
-    ElevatedButton(
-        modifier = Modifier
-            .widthIn(min = 150.dp, max = 250.dp)
-            .align(Alignment.CenterHorizontally),
-        onClick = {
-            onDismissRequest()
-        }
-    ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
-            text = stringResource(R.string.button_main_ok)
-        )
-    }
-
-    ElevatedButton(
-        modifier = Modifier
-            .widthIn(min = 150.dp, max = 250.dp)
-            .align(Alignment.CenterHorizontally),
-        onClick = {
-            onPortalEvent(
-                PortalEvent.OnPortalSellButtonClicked(
-                    state?.cardState?.id ?: 0,
-                    state?.cardState?.sellValue ?: 0f
-                )
-            )
-            println("Timer: sell ${state?.cardState?.id}, ${state?.cardState?.sellValue}")
-            onDismissRequest()
-        },
-        colors = ButtonColors(
-            containerColor = Color(0xFFC96060),
-            contentColor = Color.Black,
-            disabledContentColor = Color.Gray,
-            disabledContainerColor = Color.Gray
-        )
-    ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
-            text = stringResource(R.string.button_main_sell)
-        )
-    }
-}
-
-@Composable
-private fun BoxScope.ScaleableCardName(
-    state: HomeState?
-) {
-    var cardNameFontSize by remember {
-        mutableStateOf(22.sp)
-    }
-    var readyToDraw by remember {
-        mutableStateOf(false)
-    }
-
-    Box(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(bottom = 16.dp)
-    ) {
-        Text(
-            text = state?.cardState?.name ?: ("test test test test test test" +
-                    "test test test test test test" +
-                    "test test test test test test"),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 2.dp)
-                .align(Alignment.Center)
-                .drawWithContent {
-                    if (readyToDraw) drawContent()
-                },
-            overflow = TextOverflow.Ellipsis,
-            color = Color(0xFF000000),
-            onTextLayout = { textLayoutResult ->
-                if (textLayoutResult.hasVisualOverflow) {
-                    cardNameFontSize *= 0.9f
-                } else {
-                    readyToDraw = true
-                }
-            },
-            fontSize = cardNameFontSize
-        )
-    }
-}
-
-@Composable
-private fun BoxScope.CardFrame(
-    state: HomeState?
-) {
-    val imageResource = when (state?.cardState?.rarity) {
-        Card.RARITY_1 -> ImageVector.vectorResource(R.drawable.card_frame_blue)
-        Card.RARITY_2 -> ImageVector.vectorResource(R.drawable.card_frame_purple)
-        Card.RARITY_3 -> ImageVector.vectorResource(R.drawable.card_frame_red)
-        else -> ImageVector.vectorResource(R.drawable.card_frame_black)
-    }
-
-    Image(
-        modifier = Modifier
-            .padding(vertical = 0.dp)
-            .fillMaxSize()
-            .align(Alignment.Center),
-        imageVector = imageResource,
-        contentDescription = null,
-        contentScale = ContentScale.FillBounds
-    )
-
-    Box(
-        modifier = Modifier
-            .align(Alignment.TopStart)
-            .padding(top = 15.dp, start = 16.dp)
-            .size(width = 32.dp, height = 16.dp)
-    ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.Center),
-            text = state?.cardState?.id.toString(),
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
-            lineHeight = 8.sp,
-            textAlign = TextAlign.Center,
-            color = Color.Black
-        )
-    }
-}
-
-@Composable
-private fun BoxScope.CharacterImage(
-    state: HomeState?
-) {
-    var isLoading by remember {
-        mutableStateOf(true)
-    }
-
-    AsyncImage(
-        model = state?.cardState?.photoUrl,
-        contentDescription = state?.cardState?.name,
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxHeight()
-            .align(Alignment.Center)
-            .then(
-                if (isLoading) {
-                    Modifier.shimmerLoadingAnimation(
-                        isLoadingCompleted = false,
-                        isLightModeActive = !isSystemInDarkTheme()
-                    )
-                } else {
-                    Modifier
-                }
-            ),
-        onLoading = {
-            isLoading = true
-        },
-        onSuccess = {
-            isLoading = false
-        },
-        onError = {
-            isLoading = false
-        },
-        contentScale = ContentScale.Fit,
-        alignment = Alignment.TopStart
-    )
 }
 

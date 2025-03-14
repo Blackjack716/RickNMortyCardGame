@@ -11,6 +11,9 @@ import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.ui.compose.events.CardEvent
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
+import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
+import com.rnm.ricknmortycards.ui.compose.uiState.AllCardsState
+import com.rnm.ricknmortycards.ui.compose.uiState.FavCardsState
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
 import com.rnm.ricknmortycards.ui.screen.AllCardsScreen
 import com.rnm.ricknmortycards.ui.screen.FavCardsScreen
@@ -19,12 +22,13 @@ import com.rnm.ricknmortycards.ui.screen.HomeScreen
 @Composable
 fun RNMNavigation(
     modifier: Modifier = Modifier,
-    allCardsState: List<Card> = emptyList(),
-    favCardsState: List<Card> = emptyList(),
+    allCardsState: AllCardsState,
+    favCardsState: FavCardsState,
     homeState: HomeState? = null,
     onPortalEvent: (PortalEvent) -> Unit,
     onCardEvent: (CardEvent) -> Unit,
-    currencyState: Long? = null
+    currencyState: Long? = null,
+    onTopBarEvent: (TopBarEvent) -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -51,7 +55,9 @@ fun RNMNavigation(
                 },
                 allCardsState = allCardsState,
                 onCardEvent = onCardEvent,
-                currencyState = currencyState
+                currencyState = currencyState,
+                onTopBarEvent = onTopBarEvent,
+                onPortalEvent = onPortalEvent
             )
         }
         composable(route = RNMScreen.FavCards.name) {
@@ -61,7 +67,8 @@ fun RNMNavigation(
                     onNavEvent(event, navController)
                 },
                 favCardsState = favCardsState,
-                currencyState = currencyState
+                currencyState = currencyState,
+                onTopBarEvent = onTopBarEvent
             )
         }
     }
