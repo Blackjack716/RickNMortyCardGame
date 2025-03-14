@@ -4,11 +4,14 @@
     <string name="recharging_text_full">ENERGY FULL</string>
     <string name="recharging_text">RECHARGING… %s</string>
     <string name="button_main_ok">OK</string>">
-    <string name="button_main_sell">SELL</string>">
+    <string name="button_main_sell">SELL  +%d</string>">
+    <string name="button_main_upgrade">UPGRADE  -%d</string>">
     <string name="sort_cards">sort by</string>
     <string name="sort_menu_option1">Card ID</string>
     <string name="sort_menu_option2">Name</string>
     <string name="sort_menu_option3">Rarity</string>
     <string name="sort_menu_option4">Owned</string>
     <string name="sort_menu_option5">Favourites</string>
+    <string name="card_duplicated">Duplicated</string>
+
 </resources>

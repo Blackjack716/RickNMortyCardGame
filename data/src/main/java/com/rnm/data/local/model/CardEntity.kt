@@ -26,38 +26,22 @@ data class CardEntity(
 )
 
 fun CardEntity.getCardUpgradeCost(cardRarity: Int? = null): Float {
-    return if (cardRarity != null) {
-        when (cardRarity) {
-            1 -> UPGRADE_COST_2
-            2 -> UPGRADE_COST_3
-            else -> 0f
-        }
-    } else {
-        when (rarity) {
-            null -> UPGRADE_COST_1
-            1 -> UPGRADE_COST_2
-            2 -> UPGRADE_COST_3
-            else -> 0f
-        }
+    val newRarity = cardRarity ?: rarity
+    return when (newRarity) {
+        1 -> UPGRADE_COST_2
+        2 -> UPGRADE_COST_3
+        3 -> 0f
+        else -> UPGRADE_COST_1
     }
-
 }
 
 fun CardEntity.getCardSellCost(cardRarity: Int? = null): Float {
-    return if (cardRarity != null) {
-        when (cardRarity) {
-            1 -> SELL_VALUE_1
-            2 -> SELL_VALUE_2
-            3 -> SELL_VALUE_3
-            else -> 0f
-        }
-    } else {
-        when (rarity) {
-            1 -> SELL_VALUE_1
-            2 -> SELL_VALUE_2
-            3 -> SELL_VALUE_3
-            else -> 0f
-        }
+    val newRarity = cardRarity ?: rarity
+    return when (newRarity) {
+        1 -> SELL_VALUE_1
+        2 -> SELL_VALUE_2
+        3 -> SELL_VALUE_3
+        else -> 0f
     }
 }
 

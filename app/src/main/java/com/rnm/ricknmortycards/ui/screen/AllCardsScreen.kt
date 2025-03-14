@@ -84,6 +84,7 @@ fun AllCardsScreen(
             onDismissRequest = { openCardInfo = false },
             card = cardInspected,
             onPortalEvent = onPortalEvent,
+            crystals = currencyState
         )
     }
 
@@ -138,6 +139,7 @@ fun AllCardsScreen(
                 }
             }
         }
+
         NavigationBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             onEvent = onNavBardEvent

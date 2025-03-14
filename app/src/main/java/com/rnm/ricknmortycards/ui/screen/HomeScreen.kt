@@ -97,6 +97,7 @@ fun HomeScreen(
             onDismissRequest = { openPortal = false },
             card = state?.cardState,
             onPortalEvent = onPortalEvent,
+            crystals = currencyState
         )
     }
 
@@ -228,7 +229,8 @@ private fun BoxScope.BackgroundGraphic(state: HomeState?) {
 fun CardDialog(
     onDismissRequest: () -> Unit = {},
     card: Card?,
-    onPortalEvent: (PortalEvent) -> Unit
+    onPortalEvent: (PortalEvent) -> Unit,
+    crystals: Long?
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
@@ -254,7 +256,8 @@ fun CardDialog(
             PortalButtons(
                 onDismissRequest = onDismissRequest,
                 card = card,
-                onPortalEvent = onPortalEvent
+                onPortalEvent = onPortalEvent,
+                crystals = crystals
             )
         }
 

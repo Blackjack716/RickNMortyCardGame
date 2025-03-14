@@ -36,8 +36,9 @@ class GetRandomCardUseCase @Inject constructor(
             cardRepository.upgradeCard(randomId, newRarity)
         } else if (cardRarity < newRarity) {
             cardRepository.upgradeCard(randomId, newRarity)
+        } else {
+            return card.copy(rarity = newRarity, sellValue = sellValue, upgradeCost = 0f, isDuplicate = true)
         }
-
-        return card.copy(rarity = newRarity, sellValue = sellValue)
+        return card.copy(rarity = newRarity, sellValue = sellValue, upgradeCost = 0f)
     }
 }

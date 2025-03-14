@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -125,6 +126,10 @@ fun BoxScope.FrameOfCard(card: Card) {
 fun BoxScope.FavouriteIcon(card: Card, onCardEvent: (CardEvent) -> Unit) {
     var isFav by remember {
         mutableStateOf(card.isFavourite ?: false)
+    }
+
+    LaunchedEffect(key1 = card) {
+        isFav = card.isFavourite ?: false
     }
 
     if (card.isOwned == true) {

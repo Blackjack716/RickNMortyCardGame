@@ -1,12 +1,16 @@
 package com.rnm.ricknmortycards.ui.compose.sharedView
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,21 +70,62 @@ fun ColumnScope.CloseIcon(
 fun ColumnScope.PortalButtons(
     onDismissRequest: () -> Unit = {},
     card: Card?,
-    onPortalEvent: (PortalEvent) -> Unit
+    onPortalEvent: (PortalEvent) -> Unit,
+    crystals: Long?
 ) {
-    ElevatedButton(
-        modifier = Modifier
-            .widthIn(min = 150.dp, max = 250.dp)
-            .align(Alignment.CenterHorizontally),
-        onClick = {
-            onDismissRequest()
-        }
-    ) {
-        Text(
+    val upgradeCost = card?.upgradeCost
+    if (upgradeCost != null && crystals != null && upgradeCost.toInt() != 0) {
+        ElevatedButton(
             modifier = Modifier
-                .align(Alignment.CenterVertically),
-            text = stringResource(R.string.button_main_ok)
-        )
+                .widthIn(min = 150.dp, max = 250.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                if (crystals >= upgradeCost) {
+                    onPortalEvent(
+                        PortalEvent.OnPortalUpgradeButtonClicked(
+                            card.id ?: 0,
+                            upgradeCost
+                        )
+                    )
+                    onDismissRequest()
+                }
+            },
+            enabled = crystals >= upgradeCost,
+            colors = ButtonColors(
+                containerColor = Color(0xFF77D756),
+                contentColor = Color.Black,
+                disabledContentColor = Color.Gray,
+                disabledContainerColor = Color(0xFF434F3E)
+            )
+        ) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                text = stringResource(R.string.button_main_upgrade, upgradeCost.toInt())
+            )
+            Image(
+                modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .size(18.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.icon_crystal),
+                contentDescription = null
+            )
+        }
+    } else {
+        ElevatedButton(
+            modifier = Modifier
+                .widthIn(min = 150.dp, max = 250.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                onDismissRequest()
+            }
+        ) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically),
+                text = stringResource(R.string.button_main_ok)
+            )
+        }
     }
 
     ElevatedButton(
@@ -94,7 +139,6 @@ fun ColumnScope.PortalButtons(
                     card?.sellValue ?: 0f
                 )
             )
-            println("Timer: sell ${card?.id}, ${card?.sellValue}")
             onDismissRequest()
         },
         colors = ButtonColors(
@@ -107,7 +151,14 @@ fun ColumnScope.PortalButtons(
         Text(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            text = stringResource(R.string.button_main_sell)
+            text = stringResource(R.string.button_main_sell, (card?.sellValue?.toInt() ?: 0))
+        )
+        Image(
+            modifier = Modifier
+                .padding(vertical = 2.dp)
+                .size(18.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.icon_crystal),
+            contentDescription = null
         )
     }
 }
@@ -232,4 +283,38 @@ fun BoxScope.CharacterImage(
         contentScale = ContentScale.Fit,
         alignment = Alignment.TopStart
     )
+
+    if (card?.isDuplicate == true) {
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxSize()
+                .align(Alignment.Center)
+                .background(color = Color(0xB9545454)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.card_duplicated),
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                if (card.sellValue != null) {
+                    Text(
+                        text = "+${card.sellValue?.toInt() ?: 0}",
+                    )
+                    Image(
+                        modifier = Modifier
+                            .padding(vertical = 2.dp)
+                            .size(18.dp),
+                        imageVector = ImageVector.vectorResource(R.drawable.icon_crystal),
+                        contentDescription = null
+                    )
+                }
+
+            }
+        }
+    }
 }

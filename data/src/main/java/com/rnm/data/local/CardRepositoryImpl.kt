@@ -72,10 +72,10 @@ class CardRepositoryImpl @Inject constructor(
             if (rarity != null) {
                 cardDao.updateCard(
                     card.copy(
+                        isOwned = true,
                         rarity = rarity,
                         upgradeCost = card.getCardUpgradeCost(rarity),
                         sellValue = card.getCardSellCost(rarity),
-                        isOwned = true
                     )
                 )
             } else {
@@ -93,18 +93,15 @@ class CardRepositoryImpl @Inject constructor(
 
     override fun sellCard(cardId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val card = cardDao.getCard(cardId)
-            card.collect {
-                cardDao.updateCard(
-                    it.copy(
-                        isOwned = false,
-                        rarity = null,
-                        upgradeCost = Card.UPGRADE_COST_1,
-                        sellValue = 0f
-                    )
+            val card = cardDao.getCard(cardId).first()
+            cardDao.updateCard(
+                card.copy(
+                    isOwned = false,
+                    rarity = null,
+                    upgradeCost = Card.UPGRADE_COST_1,
+                    sellValue = 0f
                 )
-
-            }
+            )
         }
     }
 
