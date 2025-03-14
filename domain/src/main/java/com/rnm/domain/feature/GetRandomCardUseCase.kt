@@ -5,10 +5,7 @@ import com.rnm.domain.model.Card.Companion.RARITY_1
 import com.rnm.domain.model.Card.Companion.RARITY_2
 import com.rnm.domain.model.Card.Companion.RARITY_3
 import com.rnm.domain.repository.CardRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -26,15 +23,21 @@ class GetRandomCardUseCase @Inject constructor(
             else -> RARITY_1
         }
 
+        val sellValue = when(newRarity) {
+            RARITY_3 -> Card.SELL_VALUE_3
+            RARITY_2 -> Card.SELL_VALUE_2
+            else -> Card.SELL_VALUE_1
+        }
+
         val card = cardRepository.getCard(randomId).first()
         val cardRarity: Int = card.rarity ?: 0
 
         if (card.isOwned == false) {
-            cardRepository.upgradeCard(randomId)
+            cardRepository.upgradeCard(randomId, newRarity)
         } else if (cardRarity < newRarity) {
             cardRepository.upgradeCard(randomId, newRarity)
         }
 
-        return card.copy(rarity = newRarity)
+        return card.copy(rarity = newRarity, sellValue = sellValue)
     }
 }

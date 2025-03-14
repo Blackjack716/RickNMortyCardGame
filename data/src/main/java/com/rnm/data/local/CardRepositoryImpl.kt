@@ -69,7 +69,8 @@ class CardRepositoryImpl @Inject constructor(
                     card.copy(
                         rarity = rarity,
                         upgradeCost = card.getCardUpgradeCost(rarity),
-                        sellValue = card.getCardSellCost(rarity)
+                        sellValue = card.getCardSellCost(rarity),
+                        isOwned = true
                     )
                 )
             } else {
@@ -78,7 +79,7 @@ class CardRepositoryImpl @Inject constructor(
                         isOwned = true,
                         rarity = card.getBetterCardRarity(),
                         upgradeCost = card.getCardUpgradeCost(),
-                        sellValue = card.getCardSellCost()
+                        sellValue = card.getCardSellCost(),
                     )
                 )
             }

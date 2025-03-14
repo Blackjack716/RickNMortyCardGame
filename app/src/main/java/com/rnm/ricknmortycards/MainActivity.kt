@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,6 +45,9 @@ class MainActivity : ComponentActivity() {
             var homeState by remember {
                 mutableStateOf(mainViewModel.homeState.value)
             }
+            var currencyState by remember {
+                mutableLongStateOf(mainViewModel.currencyState.value)
+            }
 
             LaunchedEffect(mainViewModel.allCardsState) {
                 mainViewModel.allCardsState.collect {
@@ -65,6 +69,11 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+            LaunchedEffect(mainViewModel.currencyState) {
+                mainViewModel.currencyState.collect {
+                    currencyState = it
+                }
+            }
 
             RickNMortyCardsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -74,7 +83,8 @@ class MainActivity : ComponentActivity() {
                         favCardsState = favCardsState,
                         homeState = homeState,
                         onPortalEvent = mainViewModel::onPortalEvent,
-                        onCardEvent = mainViewModel::onCardEvent
+                        onCardEvent = mainViewModel::onCardEvent,
+                        currencyState = currencyState
                     )
                 }
             }

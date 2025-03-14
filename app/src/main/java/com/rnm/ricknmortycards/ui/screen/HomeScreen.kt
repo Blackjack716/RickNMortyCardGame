@@ -1,10 +1,5 @@
 package com.rnm.ricknmortycards.ui.screen
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,8 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,12 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -110,100 +101,13 @@ fun HomeScreen(
                 .fillMaxSize()
         ) {
             CurrencyCounterBar(currencyState)
-
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                AsyncImage(
-                    model = R.drawable.portal_home,
-                    contentDescription = null,
-                    modifier = modifier
-                        .padding(bottom = 120.dp)
-                        .fillMaxWidth(0.7f)
-                        .clickable {
-                            openPortal = true
-                            onPortalEvent(PortalEvent.OnPortalClicked)
-                        }
-                )
-            }
-
-            Image(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 100.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.home_background),
-                contentDescription = null
-            )
-
-            Image(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 30.dp)
-                    .fillMaxWidth(),
-                imageVector = ImageVector.vectorResource(R.drawable.portalgun_home),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
-            )
-            Image(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 190.dp)
-                    .width(80.dp),
-                imageVector = ImageVector.vectorResource(R.drawable.glassfluidgreen_home),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(bottom = 85.dp, start = 44.dp, end = 44.dp)
-                    .fillMaxWidth()
-                    .graphicsLayer(rotationX = 20f),
-                text = "${state?.energyLevelState ?: 0} USES LEFT",
-                color = Color.Red
-            )
-
-            var rechargingTime by remember {
-                mutableStateOf(convertLongToTimeLeft(state?.energyRechargeTimeState))
-            }
-
-            var isRecharging by remember {
-                mutableStateOf(false)
-            }
-
-            LaunchedEffect(key1 = state?.energyLevelState) {
-                val energyLevel = state?.energyLevelState ?: 0
-                if (energyLevel >= 10) {
-                    isRecharging = false
-                } else {
-                    isRecharging = true
-                    while (true) {
-                        delay(1000)
-                        rechargingTime = convertLongToTimeLeft(state?.energyRechargeTimeState)
-                    }
+            PortalAnimation(
+                onPortalClicked = {
+                    openPortal = true
+                    onPortalEvent(PortalEvent.OnPortalClicked)
                 }
-            }
-
-            val rechargingText = if (!isRecharging) {
-                stringResource(R.string.recharging_text_full)
-            } else {
-                stringResource(R.string.recharging_text, rechargingTime)
-            }
-
-            Text(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 85.dp, end = 44.dp, start = 44.dp)
-                    .fillMaxWidth()
-                    .graphicsLayer(rotationX = 20f),
-                text = rechargingText,
-                color = Color.Red,
-                textAlign = TextAlign.End
             )
-
+            BackgroundGraphic(state)
             NavigationBottomBar(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onEvent = onNavBardEvent
@@ -211,6 +115,103 @@ fun HomeScreen(
 
         }
     }
+}
+
+@Composable
+private fun BoxScope.PortalAnimation(onPortalClicked: () -> Unit) {
+    Column(
+        modifier = Modifier.align(Alignment.Center),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        AsyncImage(
+            model = R.drawable.portal_home,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(bottom = 120.dp)
+                .fillMaxWidth(0.7f)
+                .clickable {
+                    onPortalClicked()
+                }
+        )
+    }
+}
+
+@Composable
+private fun BoxScope.BackgroundGraphic(state: HomeState?) {
+    var rechargingTime by remember {
+        mutableStateOf(convertLongToTimeLeft(state?.energyRechargeTimeState))
+    }
+
+    var isRecharging by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(key1 = state?.energyLevelState) {
+        val energyLevel = state?.energyLevelState ?: 0
+        if (energyLevel >= 10) {
+            isRecharging = false
+        } else {
+            isRecharging = true
+            while (true) {
+                delay(1000)
+                rechargingTime = convertLongToTimeLeft(state?.energyRechargeTimeState)
+            }
+        }
+    }
+
+    val rechargingText = if (!isRecharging) {
+        stringResource(R.string.recharging_text_full)
+    } else {
+        stringResource(R.string.recharging_text, rechargingTime)
+    }
+
+
+    Image(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .padding(top = 100.dp),
+        imageVector = ImageVector.vectorResource(R.drawable.home_background),
+        contentDescription = null
+    )
+    Image(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 30.dp)
+            .fillMaxWidth(),
+        imageVector = ImageVector.vectorResource(R.drawable.portalgun_home),
+        contentDescription = null,
+        contentScale = ContentScale.FillWidth
+    )
+    Image(
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 190.dp)
+            .width(80.dp),
+        imageVector = ImageVector.vectorResource(R.drawable.glassfluidgreen_home),
+        contentDescription = null,
+        contentScale = ContentScale.FillWidth
+    )
+    Text(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            .padding(bottom = 85.dp, start = 44.dp, end = 44.dp)
+            .fillMaxWidth()
+            .graphicsLayer(rotationX = 20f),
+        text = stringResource(R.string.energy_level_info, state?.energyLevelState ?: 0),
+        color = Color.Red
+    )
+    Text(
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(bottom = 85.dp, end = 44.dp, start = 44.dp)
+            .fillMaxWidth()
+            .graphicsLayer(rotationX = 20f),
+        text = rechargingText,
+        color = Color.Red,
+        textAlign = TextAlign.End
+    )
 }
 
 @Composable
@@ -310,6 +311,8 @@ fun ColumnScope.PortalButtons(
                     state?.cardState?.sellValue ?: 0f
                 )
             )
+            println("Timer: sell ${state?.cardState?.id}, ${state?.cardState?.sellValue}")
+            onDismissRequest()
         },
         colors = ButtonColors(
             containerColor = Color(0xFFC96060),

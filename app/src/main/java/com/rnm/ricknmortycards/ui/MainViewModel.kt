@@ -47,7 +47,7 @@ class MainViewModel @Inject constructor(
     )
     val allCardsState = MutableStateFlow<List<Card>>(emptyList())
     val favCardsState = MutableStateFlow<List<Card>>(emptyList())
-    val currencyState = MutableStateFlow(100L)
+    val currencyState = MutableStateFlow(0L)
 
     init {
         viewModelScope.launch {
