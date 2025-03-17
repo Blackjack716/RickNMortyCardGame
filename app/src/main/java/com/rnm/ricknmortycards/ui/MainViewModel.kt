@@ -1,7 +1,5 @@
 package com.rnm.ricknmortycards.ui
 
-import androidx.compose.material3.Text
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rnm.domain.feature.BuyOrUpgradeCardUseCase
@@ -18,9 +16,7 @@ import com.rnm.domain.feature.SetCurrencyUseCase
 import com.rnm.domain.feature.SetEnergyUseCase
 import com.rnm.domain.feature.SetSortTypeUseCase
 import com.rnm.domain.feature.UpdateCharactersUseCase
-import com.rnm.domain.model.Card
 import com.rnm.domain.model.SortType
-import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.CardEvent
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
@@ -94,8 +90,12 @@ class MainViewModel @Inject constructor(
             PortalEvent.OnPortalClicked -> {
                 viewModelScope.launch {
                     if (allCardsState.value.cards.isNotEmpty()) {
-                        homeState.emit(homeState.value.copy(cardState = getRandomCardUseCase.execute()))
-                        setEnergyLevelUseCase.execute(-1)
+                        val card = getRandomCardUseCase.execute()
+                        println("card: $card")
+                        homeState.emit(homeState.value.copy(cardState = card))
+                        if (card != null) {
+                            setEnergyLevelUseCase.execute(-1)
+                        }
                     }
                 }
             }

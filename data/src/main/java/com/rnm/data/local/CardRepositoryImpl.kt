@@ -61,7 +61,7 @@ class CardRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun isDatabaseUpdated(): Boolean {
+    override fun isDatabaseUpdated(): Flow<Boolean> {
         return dataStoreManager.getIsDatabaseUpdated()
     }
 
@@ -106,6 +106,9 @@ class CardRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCardCount(): Int {
+        if (cardCount.value == null || cardCount.value == 0) {
+            return cardDao.getAllCards().map { it.size }.first()
+        }
         return cardCount.value ?: cardDao.getAllCards().map { it.size }.first()
     }
 

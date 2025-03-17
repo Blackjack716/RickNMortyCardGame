@@ -12,8 +12,11 @@ import kotlin.random.Random
 class GetRandomCardUseCase @Inject constructor(
     private val cardRepository: CardRepository
 ) {
-    suspend fun execute(): Card {
+    suspend fun execute(): Card? {
         val cardCount = cardRepository.getCardCount()
+        if (cardCount < 1) {
+            return null
+        }
         val randomId = Random.nextInt(1, cardCount)
         val rarity = Random.nextInt(0, 100)
 

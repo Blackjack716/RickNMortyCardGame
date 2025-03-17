@@ -15,6 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -29,14 +30,14 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
-    suspend fun getIsDatabaseUpdated(): Boolean {
+    fun getIsDatabaseUpdated(): Flow<Boolean> {
         return try {
             dataStore.data.map {
                 it[IS_CARDS_UPDATED_KEY] ?: false
-            }.first()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
-            false
+            flowOf(false)
         }
     }
 

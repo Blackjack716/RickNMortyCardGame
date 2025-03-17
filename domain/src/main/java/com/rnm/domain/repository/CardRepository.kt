@@ -10,7 +10,7 @@ interface CardRepository {
     fun setCardAsFav(cardId: Int)
     suspend fun getCurrencyValue(): Flow<Float>
     fun addCurrency(addedValue: Float)
-    suspend fun isDatabaseUpdated(): Boolean
+    fun isDatabaseUpdated(): Flow<Boolean>
     fun upgradeCard(cardId: Int, rarity: Int? = null)
     fun sellCard(cardId: Int)
     suspend fun getCardCount(): Int
