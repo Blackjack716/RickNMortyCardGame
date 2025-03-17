@@ -79,12 +79,13 @@ class CardRepositoryImpl @Inject constructor(
                     )
                 )
             } else {
+                val newRarity = card.getBetterCardRarity()
                 cardDao.updateCard(
                     card.copy(
                         isOwned = true,
                         rarity = card.getBetterCardRarity(),
-                        upgradeCost = card.getCardUpgradeCost(),
-                        sellValue = card.getCardSellCost(),
+                        upgradeCost = card.getCardUpgradeCost(newRarity),
+                        sellValue = card.getCardSellCost(newRarity),
                     )
                 )
             }
