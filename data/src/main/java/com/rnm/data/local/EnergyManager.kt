@@ -42,7 +42,6 @@ class EnergyManager @Inject constructor(
 
             energyLevel.value = 10 - (differenceInUses + 1)
             timer?.cancel()
-            println("timer: check Energy $additionalTime ${energyLevel.value} $difference")
             setSimpleTimer(
                 endTime = if (additionalTime > 1)
                     additionalTime + System.currentTimeMillis()
@@ -72,21 +71,11 @@ class EnergyManager @Inject constructor(
         return energyLevel.asStateFlow()
     }
 
-    private suspend fun startNewTimerIfFinished() {
-        if (dataStoreManager.getEnergyRechargeTime().first() > System.currentTimeMillis()) {
-            setSimpleTimer(RECHARGE_TIME + System.currentTimeMillis()) {
-                energyLevel.value += 1
-            }
-        }
-    }
-
     private fun setSimpleTimer(
         endTime: Long,
         delayMillis: Long = 10000,
         onFinish: () -> Unit,
     ) = CoroutineScope(Dispatchers.Default).launch {
-        println("timer: startTimer")
-
         while (System.currentTimeMillis() < endTime) {
             delay(delayMillis)
         }

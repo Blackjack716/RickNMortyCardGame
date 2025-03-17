@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.rnm.domain.model.Card
 import com.rnm.domain.model.SortType
 import com.rnm.domain.model.toInt
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -74,19 +73,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         }
     }
 
-    suspend fun setEnergyLevel(energyLevel: Int) {
-        dataStore.edit {
-            println("timer: edit energyLevel $energyLevel")
-            it[ENERGY_LEVEL_KEY] = energyLevel
-        }
-    }
-
-    fun getEnergyLevel(): Flow<Int> {
-        return dataStore.data.map {
-            it[ENERGY_LEVEL_KEY] ?: 10
-        }
-    }
-
     fun getEnergyRechargeTime(): Flow<Long> {
         return dataStore.data.map {
             it[ENERGY_RECHARGE_TIME_KEY] ?: 0
@@ -103,7 +89,6 @@ class DataStoreManager @Inject constructor(@ApplicationContext context: Context)
         val IS_CARDS_UPDATED_KEY = booleanPreferencesKey("isCardsUpdated")
         val CURRENCY_VALUE_KEY = floatPreferencesKey("currencyValueKey")
         val SORT_TYPE_KEY = intPreferencesKey("sortTypeKey")
-        val ENERGY_LEVEL_KEY = intPreferencesKey("energyLevelKey")
         val ENERGY_RECHARGE_TIME_KEY = longPreferencesKey("energyRechargeTimeKey")
 
     }

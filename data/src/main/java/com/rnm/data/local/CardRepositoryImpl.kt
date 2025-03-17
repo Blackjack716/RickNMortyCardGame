@@ -13,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -134,12 +133,6 @@ class CardRepositoryImpl @Inject constructor(
 
     override suspend fun getSortType(): Flow<SortType> {
         return dataStoreManager.getSortType().map { it.toSortType() }
-    }
-
-
-    companion object {
-        const val CURRENCY_VALUE = "currencyValue"
-        const val IS_DATABASE_UP_TO_DATE = "isDatabaseUpToDate"
     }
 
 }
