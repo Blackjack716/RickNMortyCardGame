@@ -13,5 +13,6 @@
     <string name="sort_menu_option4">Owned</string>
     <string name="sort_menu_option5">Favourites</string>
     <string name="card_duplicated">Duplicated</string>
+    <string name="snackbar_no_card">Loading Error, please wait a few seconds and try again</string>
 
 </resources>

@@ -97,7 +97,7 @@ fun HomeScreen(
                         .padding(top = 60.dp)
                 ) {
                     Text(
-                        text = "Loading Error, please wait a few seconds and try again"
+                        text = stringResource(R.string.snackbar_no_card)
                     )
                     LaunchedEffect(true) {
                         delay(5000)

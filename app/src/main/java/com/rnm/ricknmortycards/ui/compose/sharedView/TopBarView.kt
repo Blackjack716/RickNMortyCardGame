@@ -74,7 +74,6 @@ fun BoxScope.SortMenu(
             .padding(top = 36.dp)
             .widthIn(min = 80.dp, max = 180.dp)
             .heightIn(1.dp)
-            .background(color = Color.Red)
     ) {
         DropdownMenu(
             expanded = isSortMenuExpanded,
