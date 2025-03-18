@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569547788987",
+    "project_id": "rick-card-game",
+    "storage_bucket": "rick-card-game.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569547788987:android:6f7ad97dcb4bfe15c9cf9e",
+        "android_client_info": {
+          "package_name": "com.rnm.ricknmortycards"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvThcwmVSV3O5k6NloBGLMJzHXMtbFFe0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

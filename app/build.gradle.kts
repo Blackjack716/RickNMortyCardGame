@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.dagger.gradle)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.firebase.google.services)
 }
 
 android {
@@ -91,4 +92,8 @@ dependencies {
     implementation(libs.compose.lifecycle)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.accompanist.drawablepainter)
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
 }
