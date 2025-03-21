@@ -47,6 +47,9 @@ import com.rnm.ricknmortycards.ui.compose.sharedView.CloseIcon
 import com.rnm.ricknmortycards.ui.compose.sharedView.PortalButtons
 import com.rnm.ricknmortycards.ui.compose.sharedView.ScaleableCardName
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
+import com.rnm.ricknmortycards.ui.theme.AppColorScheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
+import com.rnm.ricknmortycards.ui.theme.RickNMortyCardsTheme
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -245,6 +248,7 @@ fun CardDialog(
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(color = LocalColorScheme.current.backgroundColor)
         ) {
             CloseIcon(onDismissRequest)
             Box(

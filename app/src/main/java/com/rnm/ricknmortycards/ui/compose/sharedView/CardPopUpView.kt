@@ -46,11 +46,16 @@ import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Composable
 fun ColumnScope.CloseIcon(
     onDismissRequest: () -> Unit
 ) {
+    val crossVector = if (isSystemInDarkTheme())
+        ImageVector.vectorResource(R.drawable.ic_close_dark)
+        else ImageVector.vectorResource(R.drawable.ic_close)
+
     Image(
         modifier = Modifier
             .padding(4.dp)
@@ -61,7 +66,7 @@ fun ColumnScope.CloseIcon(
             .clickable {
                 onDismissRequest()
             },
-        imageVector = ImageVector.vectorResource(R.drawable.ic_close),
+        imageVector = crossVector,
         contentDescription = null,
     )
 }
@@ -241,7 +246,7 @@ fun BoxScope.CardFrame(
             fontSize = 12.sp,
             lineHeight = 8.sp,
             textAlign = TextAlign.Center,
-            color = Color.Black
+            color = LocalColorScheme.current.primaryTextColor
         )
     }
 }
