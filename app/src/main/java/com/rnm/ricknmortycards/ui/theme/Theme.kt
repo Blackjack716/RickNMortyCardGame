@@ -63,3 +63,9 @@ fun RickNMortyCardsTheme(
         content = content
     )
 }
+
+object AppTheme {
+    val colorScheme: AppColorScheme
+        @Composable
+        get() = LocalColorScheme.current
+}

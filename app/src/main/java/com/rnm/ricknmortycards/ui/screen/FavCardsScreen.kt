@@ -17,9 +17,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rnm.ricknmortycards.ui.compose.AnimatedBackgroundAura
-import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
-import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.AnimatedBackgroundAura
+import com.rnm.ricknmortycards.ui.compose.sharedView.CurrencyCounterBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
 import com.rnm.ricknmortycards.ui.compose.sharedView.FrameOfCard

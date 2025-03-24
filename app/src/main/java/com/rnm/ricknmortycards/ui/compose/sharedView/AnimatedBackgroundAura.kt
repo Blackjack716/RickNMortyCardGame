@@ -1,4 +1,4 @@
-package com.rnm.ricknmortycards.ui.compose
+package com.rnm.ricknmortycards.ui.compose.sharedView
 
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
@@ -15,9 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rnm.domain.model.Card
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 import com.rnm.ricknmortycards.utils.BottomTriangleShape
 import com.rnm.ricknmortycards.utils.LeftTriangleShape
 import com.rnm.ricknmortycards.utils.RightTriangleShape

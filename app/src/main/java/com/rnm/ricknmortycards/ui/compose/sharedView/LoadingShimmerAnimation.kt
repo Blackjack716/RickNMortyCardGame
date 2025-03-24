@@ -1,4 +1,4 @@
-package com.rnm.ricknmortycards.ui.compose
+package com.rnm.ricknmortycards.ui.compose.sharedView
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -12,6 +12,8 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.rnm.ricknmortycards.ui.theme.darkColorScheme
+import com.rnm.ricknmortycards.ui.theme.lightColorScheme
 
 fun Modifier.shimmerLoadingAnimation(
     isLoadingCompleted: Boolean = true,
@@ -58,7 +60,7 @@ data class ShimmerAnimationData(
 ) {
     fun getColours(): List<Color> {
         return if (isLightMode) {
-            val color = Color.White
+            val color = lightColorScheme.secondaryBackgroundColor
 
             listOf(
                 color.copy(alpha = 0.3f),
@@ -68,7 +70,7 @@ data class ShimmerAnimationData(
                 color.copy(alpha = 0.3f),
             )
         } else {
-            val color = Color.Black
+            val color = darkColorScheme.secondaryBackgroundColor
 
             listOf(
                 color.copy(alpha = 0.0f),

@@ -38,7 +38,8 @@ import coil3.request.crossfade
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.CardEvent
-import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
+import com.rnm.ricknmortycards.ui.theme.AppTheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Composable
 fun ImageOfCharacter(card: Card) {
@@ -117,7 +118,7 @@ fun BoxScope.FrameOfCard(card: Card) {
             fontSize = 8.sp,
             lineHeight = 6.sp,
             textAlign = TextAlign.Center,
-            color = Color.Black
+            color = AppTheme.colorScheme.primaryTextColor
         )
     }
 }
@@ -193,7 +194,7 @@ fun BoxScope.NameOfCharacter(card: Card) {
                     if (readyToDraw) drawContent()
                 },
             overflow = TextOverflow.Ellipsis,
-            color = Color(0xFF000000),
+            color = AppTheme.colorScheme.primaryTextColor,
             onTextLayout = { textLayoutResult ->
                 if (textLayoutResult.hasVisualOverflow) {
                     cardNameFontSize *= 0.9f

@@ -24,9 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rnm.domain.model.Card
 import com.rnm.domain.model.SortType
-import com.rnm.ricknmortycards.ui.compose.AnimatedBackgroundAura
-import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
-import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.AnimatedBackgroundAura
+import com.rnm.ricknmortycards.ui.compose.sharedView.CurrencyCounterBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.events.CardEvent
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
@@ -37,6 +37,8 @@ import com.rnm.ricknmortycards.ui.compose.sharedView.ImageOfCharacter
 import com.rnm.ricknmortycards.ui.compose.sharedView.NameOfCharacter
 import com.rnm.ricknmortycards.ui.compose.sharedView.SortMenu
 import com.rnm.ricknmortycards.ui.compose.uiState.AllCardsState
+import com.rnm.ricknmortycards.ui.theme.AppTheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 import com.rnm.ricknmortycards.utils.MockCardsData
 
 @Preview(showBackground = true)
@@ -99,7 +101,7 @@ fun AllCardsScreen(
                 .padding(top = 62.dp)
                 .align(Alignment.TopEnd),
             thickness = 2.dp,
-            color = Color.LightGray
+            color = AppTheme.colorScheme.secondaryBackgroundColor
         )
 
         LazyVerticalGrid(

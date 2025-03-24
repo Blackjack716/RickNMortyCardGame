@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.rnm.domain.model.SortType
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.TopBarEvent
+import com.rnm.ricknmortycards.ui.theme.AppTheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Composable
 fun BoxScope.SortMenu(
@@ -42,6 +44,7 @@ fun BoxScope.SortMenu(
     )
     var isSortMenuExpanded by remember { mutableStateOf(false) }
     var selectedSortMenuOption by remember { mutableStateOf(sortMenuOptions[0]) }
+    val colorScheme = AppTheme.colorScheme
 
     Row(
         modifier = Modifier
@@ -79,13 +82,13 @@ fun BoxScope.SortMenu(
             expanded = isSortMenuExpanded,
             onDismissRequest = { isSortMenuExpanded = false },
             modifier = Modifier
-                .background(color = Color.White)
+                .background(color = colorScheme.backgroundColor)
         ) {
             sortMenuOptions.forEach { option ->
                 val backgroundColor = if (selectedSortMenuOption == option) {
-                    Color.LightGray
+                    colorScheme.secondaryBackgroundColor
                 } else {
-                    Color.White
+                    colorScheme.backgroundColor
                 }
                 DropdownMenuItem(
                     text = {

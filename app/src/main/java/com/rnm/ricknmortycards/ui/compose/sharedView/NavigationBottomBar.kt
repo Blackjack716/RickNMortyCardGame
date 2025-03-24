@@ -1,4 +1,4 @@
-package com.rnm.ricknmortycards.ui.compose
+package com.rnm.ricknmortycards.ui.compose.sharedView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
+import com.rnm.ricknmortycards.ui.theme.AppTheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Preview
 @Composable
@@ -36,6 +38,7 @@ fun NavigationBottomBar(
     modifier: Modifier = Modifier,
     onEvent: (NavBarEvent) -> Unit
 ) {
+    val colorScheme = AppTheme.colorScheme
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -48,7 +51,7 @@ fun NavigationBottomBar(
             modifier = Modifier
                 .widthIn(min = 50.dp)
                 .fillMaxHeight()
-                .background(color = Color.LightGray)
+                .background(color = colorScheme.secondaryBackgroundColor)
                 .weight(0.3f)
                 .clickable { onEvent(NavBarEvent.OnAllCardClicked) }
         ) {
@@ -64,7 +67,7 @@ fun NavigationBottomBar(
             modifier = Modifier
                 .widthIn(min = 50.dp)
                 .fillMaxHeight()
-                .background(color = Color.LightGray)
+                .background(color = colorScheme.secondaryBackgroundColor)
                 .weight(0.3f)
                 .clickable { onEvent(NavBarEvent.OnHomeClicked) }
         ) {
@@ -80,7 +83,7 @@ fun NavigationBottomBar(
             modifier = Modifier
                 .widthIn(min = 50.dp)
                 .fillMaxHeight()
-                .background(color = Color.LightGray)
+                .background(color = colorScheme.secondaryBackgroundColor)
                 .weight(0.3f)
                 .clickable { onEvent(NavBarEvent.OnFavCardClicked) }
         ) {

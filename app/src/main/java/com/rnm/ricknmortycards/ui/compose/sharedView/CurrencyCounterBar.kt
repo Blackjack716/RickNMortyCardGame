@@ -1,4 +1,4 @@
-package com.rnm.ricknmortycards.ui.compose
+package com.rnm.ricknmortycards.ui.compose.sharedView
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.rnm.ricknmortycards.R
+import com.rnm.ricknmortycards.ui.theme.AppTheme
+import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Composable
 fun BoxScope.CurrencyCounterBar(
@@ -25,7 +27,11 @@ fun BoxScope.CurrencyCounterBar(
     Row(
         modifier = Modifier
             .align(Alignment.TopEnd)
-            .border(width = 3.dp, color = Color.LightGray, shape = RoundedCornerShape(8.dp)),
+            .border(
+                width = 3.dp,
+                color = AppTheme.colorScheme.secondaryBackgroundColor,
+                shape = RoundedCornerShape(8.dp)
+            ),
         horizontalArrangement = Arrangement.End
     ) {
         Image(

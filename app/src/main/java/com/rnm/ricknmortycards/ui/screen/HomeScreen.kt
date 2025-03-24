@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,9 +37,9 @@ import androidx.compose.ui.window.Dialog
 import coil3.compose.AsyncImage
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
-import com.rnm.ricknmortycards.ui.compose.AnimatedBackgroundAura
-import com.rnm.ricknmortycards.ui.compose.CurrencyCounterBar
-import com.rnm.ricknmortycards.ui.compose.NavigationBottomBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.AnimatedBackgroundAura
+import com.rnm.ricknmortycards.ui.compose.sharedView.CurrencyCounterBar
+import com.rnm.ricknmortycards.ui.compose.sharedView.NavigationBottomBar
 import com.rnm.ricknmortycards.ui.compose.events.NavBarEvent
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
 import com.rnm.ricknmortycards.ui.compose.sharedView.CardFrame
@@ -47,7 +48,7 @@ import com.rnm.ricknmortycards.ui.compose.sharedView.CloseIcon
 import com.rnm.ricknmortycards.ui.compose.sharedView.PortalButtons
 import com.rnm.ricknmortycards.ui.compose.sharedView.ScaleableCardName
 import com.rnm.ricknmortycards.ui.compose.uiState.HomeState
-import com.rnm.ricknmortycards.ui.theme.AppColorScheme
+import com.rnm.ricknmortycards.ui.theme.AppTheme
 import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 import com.rnm.ricknmortycards.ui.theme.RickNMortyCardsTheme
 import kotlinx.coroutines.delay
@@ -223,7 +224,7 @@ private fun BoxScope.BackgroundGraphic(state: HomeState?) {
             .fillMaxWidth()
             .graphicsLayer(rotationX = 20f),
         text = stringResource(R.string.energy_level_info, state?.energyLevelState ?: 0),
-        color = Color.Red
+        color = AppTheme.colorScheme.gunTextColor
     )
     Text(
         modifier = Modifier
@@ -232,7 +233,7 @@ private fun BoxScope.BackgroundGraphic(state: HomeState?) {
             .fillMaxWidth()
             .graphicsLayer(rotationX = 20f),
         text = rechargingText,
-        color = Color.Red,
+        color = AppTheme.colorScheme.gunTextColor,
         textAlign = TextAlign.End
     )
 }
@@ -248,7 +249,6 @@ fun CardDialog(
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = LocalColorScheme.current.backgroundColor)
         ) {
             CloseIcon(onDismissRequest)
             Box(

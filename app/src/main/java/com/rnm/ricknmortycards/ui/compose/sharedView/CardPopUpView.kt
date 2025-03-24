@@ -45,7 +45,7 @@ import coil3.compose.AsyncImage
 import com.rnm.domain.model.Card
 import com.rnm.ricknmortycards.R
 import com.rnm.ricknmortycards.ui.compose.events.PortalEvent
-import com.rnm.ricknmortycards.ui.compose.shimmerLoadingAnimation
+import com.rnm.ricknmortycards.ui.theme.AppTheme
 import com.rnm.ricknmortycards.ui.theme.LocalColorScheme
 
 @Composable
@@ -54,14 +54,18 @@ fun ColumnScope.CloseIcon(
 ) {
     val crossVector = if (isSystemInDarkTheme())
         ImageVector.vectorResource(R.drawable.ic_close_dark)
-        else ImageVector.vectorResource(R.drawable.ic_close)
+    else ImageVector.vectorResource(R.drawable.ic_close)
 
     Image(
         modifier = Modifier
             .padding(4.dp)
             .align(Alignment.End)
             .size(30.dp)
-            .border(width = 2.dp, shape = CircleShape, color = Color.LightGray)
+            .border(
+                width = 2.dp,
+                shape = CircleShape,
+                color = AppTheme.colorScheme.secondaryBackgroundColor
+            )
             .alpha(0.6f)
             .clickable {
                 onDismissRequest()
@@ -78,6 +82,7 @@ fun ColumnScope.PortalButtons(
     onPortalEvent: (PortalEvent) -> Unit,
     crystals: Long?
 ) {
+    val localColorScheme = AppTheme.colorScheme
     val upgradeCost = card?.upgradeCost
     if (upgradeCost != null && crystals != null && upgradeCost.toInt() != 0) {
         ElevatedButton(
@@ -97,10 +102,10 @@ fun ColumnScope.PortalButtons(
             },
             enabled = crystals >= upgradeCost,
             colors = ButtonColors(
-                containerColor = Color(0xFF77D756),
-                contentColor = Color.Black,
-                disabledContentColor = Color.Gray,
-                disabledContainerColor = Color(0xFF434F3E)
+                containerColor = localColorScheme.positiveButtonColor,
+                contentColor = localColorScheme.primaryTextColor,
+                disabledContentColor = localColorScheme.primaryTextColor,
+                disabledContainerColor = localColorScheme.buttonColor
             )
         ) {
             Text(
@@ -147,10 +152,10 @@ fun ColumnScope.PortalButtons(
             onDismissRequest()
         },
         colors = ButtonColors(
-            containerColor = Color(0xFFC96060),
-            contentColor = Color.Black,
-            disabledContentColor = Color.Gray,
-            disabledContainerColor = Color.Gray
+            containerColor = localColorScheme.negativeButtonColor,
+            contentColor = localColorScheme.primaryTextColor,
+            disabledContentColor = localColorScheme.primaryTextColor,
+            disabledContainerColor = localColorScheme.buttonColor
         )
     ) {
         Text(
@@ -198,7 +203,7 @@ fun BoxScope.ScaleableCardName(
                     if (readyToDraw) drawContent()
                 },
             overflow = TextOverflow.Ellipsis,
-            color = Color(0xFF000000),
+            color = AppTheme.colorScheme.primaryTextColor,
             onTextLayout = { textLayoutResult ->
                 if (textLayoutResult.hasVisualOverflow) {
                     cardNameFontSize *= 0.9f
@@ -246,7 +251,7 @@ fun BoxScope.CardFrame(
             fontSize = 12.sp,
             lineHeight = 8.sp,
             textAlign = TextAlign.Center,
-            color = LocalColorScheme.current.primaryTextColor
+            color = AppTheme.colorScheme.primaryTextColor
         )
     }
 }
@@ -295,7 +300,7 @@ fun BoxScope.CharacterImage(
                 .padding(10.dp)
                 .fillMaxSize()
                 .align(Alignment.Center)
-                .background(color = Color(0xB9545454)),
+                .background(color = AppTheme.colorScheme.secondaryBackgroundColor),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
